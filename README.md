@@ -1,10 +1,11 @@
 # Concierge
 
-Concierge is a personal Telegram bot that helps smart social media manager to manage their instagram accounts.
+Concierge is a personal Telegram bot that helps smart social media manager manager their instagram accounts.
 
-  - Everything in one chat
+  - Everything in one chat: DMs, comments
   - Answer your notification directly on telegram
   - Instagram multiaccount support
+  - Realtime.
 
 
 ### Installation
