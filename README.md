@@ -4,7 +4,7 @@ Concierge is a personal Telegram bot that helps smart social media manager to ma
 
   - Everything in one chat
   - Answer your notification directly on telegram
-  - Multiaccount
+  - Instagram multiaccount support
 
 
 ### Installation
