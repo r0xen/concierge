@@ -1,9 +1,5 @@
 # Concierge
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 Concierge is a personal Telegram bot that helps smart social media manager to manage their instagram accounts.
 
   - Everything in one chat
@@ -29,8 +25,7 @@ Want to contribute? You are welcome.
 
 ### Todos
 
- - Write MORE Tests
- - Add Night Mode
+ - Add tracking comments / dm requests
 
 License
 ----
