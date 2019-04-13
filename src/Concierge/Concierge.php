@@ -15,10 +15,6 @@ use unreal4u\TelegramAPI\HttpClientRequestHandler;
  * TODO: 
  * 1) tirare fuori instagram / logger
  * 2) aggiungere altri comandi (send image/ audio/video via tg)
- * 4) multi account ig (un metodo ->addInstagram(nome, ig)) e interamente gestisci con array di istanze ig
- *   mappa nome, ig in questo modo concierge sa che istanza deve usare per rispondere ai commenti/direct
- *   su telegram arriva roba tipo [nome_ig] @utente: messaggio
- *   tu rispondi lui parsa e via. Il mention diventa un po' noioso
  */
 class Concierge
 {
