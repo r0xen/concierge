@@ -5,8 +5,10 @@ namespace Concierge\Service;
 use Closure;
 use SplQueue;
 use InstagramAPI\Push;
+use Concierge\Concierge;
 use InstagramAPI\Instagram;
 use React\EventLoop\LoopInterface;
+use Concierge\Commands\HandlerPush;
 use Concierge\Commands\NullCommand;
 use InstagramAPI\Push\Notification;
 use Concierge\Commands\CommandInterface;
@@ -43,6 +45,7 @@ class InstagramService
      * @var Queue
      */
     public $jobsForTelegram;
+    private $concierge;
 
     /**
      * Constructor
@@ -51,8 +54,9 @@ class InstagramService
      * @param Instagram $instagram
      * @param LoopInterface $loop
      */
-    public function __construct(string $id, Instagram $instagram, LoopInterface $loop)
+    public function __construct(Concierge $concierge, string $id, Instagram $instagram, LoopInterface $loop)
     {
+        $this->concierge = $concierge;
         $this->instagram = $instagram;
         $this->id = $id;
         $this->loop = $loop;
@@ -81,84 +85,6 @@ class InstagramService
     }
 
     /**
-     * Helper function 
-     *
-     * @param string $id
-     * @return DirectThread
-     */
-    private function getThread(string $id): DirectThread
-    {
-        return $this->getInstagram()->direct->getThread($id)->getThread();
-    }
-
-    /**
-     * Handle RavenMedia items
-     *
-     * @param DirectThreadItem $item
-     * @return string
-     */
-    private function handleRavenMedia(DirectThreadItem $item): string
-    {
-        $item = $item->getVisualMedia()->getMedia();
-        switch ($item->getMediaType()) {
-            case 1:
-                $item = $item->getImageVersions2()['candidates'];
-                break;
-            case 2:
-                $item = $item->getVideoVersions();
-                break;
-        }
-        return $item[0]['url'];
-    }
-
-    /**
-     * Handle Media items
-     *
-     * @param DirectThreadItem $item
-     * @return string
-     */
-    private function handleMedia(DirectThreadItem $item): string
-    {
-        if ($item->getMedia()->isVideoVersions()) {
-            $item = $item->getMedia()->getVideoVersions();
-        } else {
-            $item = $item->getMedia()->getImageVersions2()->getCandidates();
-        }
-        return $item[0]->getUrl();
-    }
-    /**
-     * Handle Audio items
-     *
-     * @param DirectThreadItem $item
-     * @return string
-     */
-    private function handleAudio(DirectThreadItem $item): string
-    {
-        return $item->getVoiceMedia()['media']['audio']['audio_src'];
-    }
-    /**
-     * HandleReelShare
-     *
-     * @param DirectThreadItem $item
-     * @return string
-     */
-    private function handleReelShare(DirectThreadItem $item): string
-    {
-        return $item->getReelShare()->getText();
-    }
-
-    /**
-     * Handle text items
-     *
-     * @param DirectThreadItem $item
-     * @return string
-     */
-    private function handleText(DirectThreadItem $item): string
-    {
-        return $item->getText();
-    }
-
-    /**
      * Handle Notifications
      * 
      * @param Notification $push
@@ -167,36 +93,18 @@ class InstagramService
     private function handlePush(Notification $push): CommandInterface
     {
         // todo per ogni push ttype itera su tutte le factory vedendo se la becca
-        if ($push->getActionParam('id') && $push->getActionParam('x')) {
-            $thread = $this->getThread($push->getActionParam('id'));
-            $text = "[$this->id] @" . $thread->getUsers()[0]->getUsername() . ": ";
+        // var_dump($push);
 
-            foreach ($thread->getItems() as $item) {
-                if ($item->getItemId() == $push->getActionParam('x')) {
-                    switch ($item->getItemType()) {
-                        case 'text':
-                            $text .= $this->handleText($item);
-                            break;
-                        case 'raven_media':
-                            $text .= $this->handleRavenMedia($item);
-                            break;
-                        case 'media':
-                            $text .= $this->handleMedia($item);
-                            break;
-                        case 'voice_media':
-                            $text .= $this->handleAudio($item);
-                            break;
-                        case 'reel_share':
-                            $text .= $this->handleReelShare($item); // story reply
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            return new TelegramSendText($text, A_USER_CHAT_ID);
+        switch($push->getCollapseKey()){
+            case 'direct_v2_message':
+                $obj =  new HandlerPush($this->id, $this->getInstagram(), $push);
+                $obj = $obj->parseDirectPush();
+                return $obj;
+            default:
+                return new NullCommand();
+                break; 
         }
-        return new NullCommand();
+    
     }
 
     /**
@@ -210,6 +118,7 @@ class InstagramService
         $command = $this->handlePush($push);
         if (!$command instanceof NullCommand) {
             $this->addJob($command);
+            $this->concierge->notify($this);
         }
     }
 
@@ -234,6 +143,9 @@ class InstagramService
         $this->getPushService()->start();
 
         $this->getPushService()->on('direct_v2_message', Closure::fromCallable([$this, 'orchestrate']));
+        /** log? */
+        // $this->getPushService()->on('incoming', Closure::fromCallable([$this, 'orchestrate']));
+
     }
 
     /**

@@ -8,5 +8,5 @@ namespace Concierge\Commands;
 abstract class JobAbstract implements CommandInterface
 {
 
-    abstract public function getRecipient();
+    abstract public function getRecipient(): string;
 }

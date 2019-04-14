@@ -6,6 +6,7 @@ use InstagramAPI\Instagram;
 use React\EventLoop\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
+use Concierge\Commands\JobAbstract;
 use Concierge\Service\TelegramService;
 use Concierge\Service\InstagramService;
 use Concierge\Commands\CommandInterface;
@@ -109,7 +110,7 @@ class Concierge
             echo 'Something went wrong: ' . $e->getMessage() . "\n";
             exit(0);
         }
-        return new InstagramService(IG_USERNAME, $ig, $loop);
+        return new InstagramService($this, IG_USERNAME, $ig, $loop);
     }
 
     /**
@@ -120,7 +121,27 @@ class Concierge
      */
     private function setupTelegram(LoopInterface $loop): TelegramService
     {
-        return new TelegramService(new TgLog(BOT_TOKEN, new HttpClientRequestHandler($loop)), $loop);
+        return new TelegramService($this, new TgLog(BOT_TOKEN, new HttpClientRequestHandler($loop)), $loop);
+    }
+
+    public function notify($service){
+        if($service instanceof InstagramService){
+            while (!$service->jobsForTelegram->isEmpty()) {
+                $job = $service->jobsForTelegram->dequeue();
+                $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
+                echo "\nmessaggio su telegram inviato\n";
+            }
+        }
+        else{
+            while (!$service->jobsForInstagram->isEmpty()) {
+                $job = $service->jobsForInstagram->dequeue();
+                $job->recipient = [
+                    'users' => [$this->getInstagram($job->client)->getInstagram()->people->getUserIdForName($job->recipient)]
+                ];
+                $this->getInstagram($job->client)->getInstagram()->direct->sendText($job->recipient, $job->answer);
+                echo "\n inviato dm\n";
+            }
+        }
     }
 
     /**
@@ -138,27 +159,18 @@ class Concierge
         }
         $concierge->startService();
 
-        $this->loop->addPeriodicTimer(2, function () use ($concierge) {
-            foreach ($this->instagram as $instagram) {
-                if (!$instagram->jobsForTelegram->isEmpty()) {
-                    /** @var CommandInterface $job */
-                    while (!$instagram->jobsForTelegram->isEmpty()) {
-                        $job = $instagram->jobsForTelegram->dequeue();
-                        $concierge->sendMessage($job->getText(), $job->getRecipient());
-                    }
-                }
-            }
-            if (!$concierge->jobsForInstagram->isEmpty()) {
-                /** @var QueueInterface $job */
-                while (!$concierge->jobsForInstagram->isEmpty()) {
-                    $job = $concierge->jobsForInstagram->dequeue();
-                    $job->recipient = [
-                        'users' => [$this->getInstagram($job->client)->getInstagram()->people->getUserIdForName($job->recipient)]
-                    ];
-                    $this->getInstagram($job->client)->getInstagram()->direct->sendText($job->recipient, $job->answer);
-                }
-            }
-        });
+        // $this->loop->addPeriodicTimer(2, function () use ($concierge) {
+        //     foreach ($this->instagram as $instagram) {
+        //         if (!$instagram->jobsForTelegram->isEmpty()) {
+        //             /** @var JobAbstract $job */
+        //             while (!$instagram->jobsForTelegram->isEmpty()) {
+        //                 $job = $instagram->jobsForTelegram->dequeue();
+        //                 $concierge->sendMessage($job->getText(), $job->getRecipient());
+        //             }
+        //         }
+        //     }
+
+        // });
 
         $this->loop->run();
     }

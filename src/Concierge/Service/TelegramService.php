@@ -3,6 +3,7 @@
 namespace Concierge\Service;
 
 use SplQueue;
+use Concierge\Concierge;
 use Concierge\Commands\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
@@ -24,6 +25,8 @@ class TelegramService
      * @var TgLog
      */
     private $tgLog;
+
+    private $concierge;
     /**
      * ID last update fetched
      *
@@ -55,8 +58,9 @@ class TelegramService
      * @param TgLog $telegram
      * @param LoopInterface $loop
      */
-    public function __construct(TgLog $telegram, LoopInterface $loop)
+    public function __construct(Concierge $concierge, TgLog $telegram, LoopInterface $loop)
     {
+        $this->concierge = $concierge;
         $this->tgLog = $telegram;
         $this->loop = $loop;
         $this->jobsForInstagram = new SplQueue();
@@ -181,6 +185,7 @@ class TelegramService
             $command = $this->handleMessage($update->message);
             if ($command instanceof JobAbstract) {
                 $this->jobsForInstagram->enqueue($command);
+                $this->concierge->notify($this);
                 return;
             }
             $command->execute();
