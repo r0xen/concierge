@@ -9,7 +9,6 @@ use React\EventLoop\LoopInterface;
 use Concierge\Commands\JobAbstract;
 use Concierge\Service\TelegramService;
 use Concierge\Service\InstagramService;
-use Concierge\Commands\CommandInterface;
 use unreal4u\TelegramAPI\HttpClientRequestHandler;
 use Concierge\Service\ServiceInterface;
 
@@ -135,7 +134,6 @@ class Concierge
      */
     public function run()
     {
-        /** @var TelegramService $concierge */
         $concierge = $this->getTelegram();
 
         foreach ($this->instagram as $instagramInstance) {

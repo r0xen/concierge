@@ -49,8 +49,8 @@ class InstagramService implements ServiceInterface
     public function __construct(Concierge $concierge, string $id, Instagram $instagram, LoopInterface $loop)
     {
         $this->concierge = $concierge;
-        $this->instagram = $instagram;
         $this->id = $id;
+        $this->instagram = $instagram;
         $this->loop = $loop;
         $this->pushService = new Push($this->loop, $this->instagram);
     }
@@ -70,7 +70,7 @@ class InstagramService implements ServiceInterface
      *
      * @return 
      */
-    public function getInstagram()
+    private function getInstagram()
     {
         return $this->instagram;
     }
@@ -117,17 +117,6 @@ class InstagramService implements ServiceInterface
         if (!$command instanceof NullCommand) {
             $this->concierge->notify($this, $command);
         }
-    }
-
-    /**
-     * Add new command to the queue
-     *
-     * @param CommandInterface $job
-     * @return void
-     */
-    private function addJob(CommandInterface $job): void
-    {
-        $this->jobsForTelegram->enqueue($job);
     }
 
     /**
