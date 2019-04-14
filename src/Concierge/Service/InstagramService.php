@@ -77,11 +77,18 @@ class InstagramService
     /**
      * Returns Instagram API istance
      *
-     * @return Instagram
+     * @return 
      */
-    public function getInstagram(): Instagram
+    public function getInstagram()
     {
         return $this->instagram;
+    }
+
+    public function sendMessage($text, $recipient){
+        $recipient = [
+            'users' => [$this->getInstagram()->people->getUserIdForName($recipient)]
+        ];
+        $this->getInstagram()->direct->sendText($recipient, $text);
     }
 
     /**

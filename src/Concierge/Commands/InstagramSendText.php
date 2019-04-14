@@ -8,11 +8,11 @@ namespace Concierge\Commands;
 class InstagramSendText extends JobAbstract
 {
     /**
-     * Our answer
+     * Our text
      *
      * @var string
      */
-    public $answer;
+    public $text;
     /**
      * Recipient name
      *
@@ -33,9 +33,9 @@ class InstagramSendText extends JobAbstract
      * @param string $recipient
      * @param string $client
      */
-    public function __construct(string $answer, string $recipient, string $client)
+    public function __construct(string $text, string $recipient, string $client)
     {
-        $this->answer = $answer;
+        $this->text = $text;
         $this->recipient = $recipient;
         $this->client = $client;
     }
@@ -49,4 +49,15 @@ class InstagramSendText extends JobAbstract
     {
         return $this->recipient;
     }
+
+     /**
+     * returns text
+     *
+     * @return string
+     */
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
 }
