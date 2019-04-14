@@ -100,7 +100,6 @@ class InstagramService implements ServiceInterface
                 return $obj;
             default:
                 return new NullCommand();
-                break; 
         }
     
     }

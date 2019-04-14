@@ -3,16 +3,18 @@
 namespace Concierge\Commands;
 
 use InstagramAPI\Push\Notification;
-use Concierge\Commands\TelegramSendText;
+use Concierge\Commands\Job\TelegramSendText;
 use InstagramAPI\Response\Model\DirectThread;
 use InstagramAPI\Response\Model\DirectThreadItem;
+use InstagramAPI\Instagram;
 
 class HandlerPush
 {
 
     private $instagram;
     private $push;
-    public function __construct(string $client, $instagram, Notification $push)
+
+    public function __construct(string $client, Instagram $instagram, Notification $push)
     {
         $this->client = $client;
         $this->instagram = $instagram;
@@ -42,7 +44,7 @@ class HandlerPush
         }
     }
 
-    public function handleItemType(DirectThreadItem $item): string
+    private function handleItemType(DirectThreadItem $item): string
     {
         switch ($item->getItemType()) {
             case 'text':
@@ -56,6 +58,7 @@ class HandlerPush
             case 'reel_share':
                 return $this->handleReelShare($item); // story reply
             default:
+                return '';
         }
     }
 

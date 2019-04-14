@@ -7,7 +7,7 @@ use Concierge\Concierge;
 use Concierge\Commands\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
-use Concierge\Commands\JobAbstract;
+use Concierge\Commands\Job\JobAbstract;
 use React\Promise\PromiseInterface;
 use Concierge\Commands\CommandInterface;
 use unreal4u\TelegramAPI\Telegram\Types\Update;
@@ -58,7 +58,7 @@ class TelegramService implements ServiceInterface
         $this->tgLog = $telegram;
         $this->loop = $loop;
         $this->lastUpdate = 0;
-        $this->factory = new Factory($this);
+        $this->factory = new Factory($this); // todo e' orrendo
     }
     /**
      * Sends a message

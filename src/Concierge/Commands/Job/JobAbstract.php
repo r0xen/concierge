@@ -1,6 +1,8 @@
 <?php
 
-namespace Concierge\Commands;
+namespace Concierge\Commands\Job;
+
+use Concierge\Commands\CommandInterface;
 
 /**
  * Abstract class for jobs

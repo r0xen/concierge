@@ -75,7 +75,7 @@ class Concierge
      *
      * @return TelegramService
      */
-    public function getTelegram(): TelegramService
+    private function getTelegram(): TelegramService
     {
         return $this->telegram;
     }
@@ -85,7 +85,7 @@ class Concierge
      *
      * @return InstagramService
      */
-    public function getInstagram(string $id): InstagramService
+    private function getInstagram(string $id): InstagramService
     {
         return $this->instagram[$id];
     }

@@ -6,7 +6,7 @@ use Concierge\Commands\HelpCommand;
 use Concierge\Commands\NullCommand;
 use Concierge\Service\TelegramService;
 use Concierge\Commands\CommandInterface;
-use Concierge\Commands\InstagramSendText;
+use Concierge\Commands\Job\InstagramSendText;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\MessageEntity;
 

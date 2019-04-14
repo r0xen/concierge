@@ -1,6 +1,6 @@
 <?php
 
-namespace Concierge\Commands;
+namespace Concierge\Commands\Job;
 
 /**
  * TODO extends InstagramSendAbstract?
