@@ -12,14 +12,11 @@ use Concierge\Commands\HandlerPush;
 use Concierge\Commands\NullCommand;
 use InstagramAPI\Push\Notification;
 use Concierge\Commands\CommandInterface;
-use Concierge\Commands\TelegramSendText;
-use InstagramAPI\Response\Model\DirectThread;
-use InstagramAPI\Response\Model\DirectThreadItem;
 
 /**
  * Classe Instagram Service
  */
-class InstagramService
+class InstagramService implements ServiceInterface
 {
     /**
      * Instance to Instagram API
@@ -84,7 +81,7 @@ class InstagramService
         return $this->instagram;
     }
 
-    public function sendMessage($text, $recipient){
+    public function sendMessage(string $text, string $recipient){
         $recipient = [
             'users' => [$this->getInstagram()->people->getUserIdForName($recipient)]
         ];

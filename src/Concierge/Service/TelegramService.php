@@ -17,7 +17,7 @@ use unreal4u\TelegramAPI\Telegram\Methods\GetUpdates;
 use unreal4u\TelegramAPI\Telegram\Methods\SendMessage;
 use unreal4u\TelegramAPI\Telegram\Types\Custom\UpdatesArray;
 
-class TelegramService
+class TelegramService implements ServiceInterface
 {
     /**
      * Telegram API instance
@@ -172,6 +172,11 @@ class TelegramService
     {
         $updatePromise = $this->getUpdates();
         $this->autoUpdate($updatePromise);
+    }
+
+    public function stopService()
+    {
+        
     }
     /**
      * Business logic for updates

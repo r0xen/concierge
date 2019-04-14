@@ -11,6 +11,7 @@ use Concierge\Service\TelegramService;
 use Concierge\Service\InstagramService;
 use Concierge\Commands\CommandInterface;
 use unreal4u\TelegramAPI\HttpClientRequestHandler;
+use Concierge\Service\ServiceInterface;
 
 /**
  * TODO: 
@@ -111,8 +112,13 @@ class Concierge
     {
         return new TelegramService($this, new TgLog(BOT_TOKEN, new HttpClientRequestHandler($loop)), $loop);
     }
-
-    public function notify($service){
+    /**
+     * Called by services to notify a new job
+     *
+     * @param [type] $service
+     * @return void
+     */
+    public function notify(ServiceInterface $service){
         if($service instanceof InstagramService){
             while (!$service->jobsForTelegram->isEmpty()) {
                 /** @var JobAbstract $job */
