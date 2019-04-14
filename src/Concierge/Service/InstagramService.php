@@ -36,12 +36,7 @@ class InstagramService implements ServiceInterface
      * @var Push
      */
     private $pushService;
-    /**
-     * Queue of jobs for telegram
-     *
-     * @var Queue
-     */
-    public $jobsForTelegram;
+
     private $concierge;
 
     /**
@@ -58,7 +53,6 @@ class InstagramService implements ServiceInterface
         $this->id = $id;
         $this->loop = $loop;
         $this->pushService = new Push($this->loop, $this->instagram);
-        $this->jobsForTelegram = new SplQueue();
     }
 
     /**
@@ -121,8 +115,7 @@ class InstagramService implements ServiceInterface
     {
         $command = $this->handlePush($push);
         if (!$command instanceof NullCommand) {
-            $this->addJob($command);
-            $this->concierge->notify($this);
+            $this->concierge->notify($this, $command);
         }
     }
 

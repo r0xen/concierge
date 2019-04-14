@@ -118,23 +118,13 @@ class Concierge
      * @param [type] $service
      * @return void
      */
-    public function notify(ServiceInterface $service){
+    public function notify(ServiceInterface $service, JobAbstract $job){
         if($service instanceof InstagramService){
-            while (!$service->jobsForTelegram->isEmpty()) {
-                /** @var JobAbstract $job */
-                $job = $service->jobsForTelegram->dequeue();
-                $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
-                echo "\nmessaggio su telegram inviato\n";
-            }
-        }
-        else{
-            echo "telegram job\n";
-            while (!$service->jobsForInstagram->isEmpty()) {
-                /** @var JobAbstract $job */
-                $job = $service->jobsForInstagram->dequeue();
-                $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
-                echo "\n inviato dm\n";
-            }
+            $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
+            echo "\nmessaggio su telegram inviato\n";
+        } else{
+            $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
+            echo "\ninviato dm\n";
         }
     }
 

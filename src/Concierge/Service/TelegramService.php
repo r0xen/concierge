@@ -45,12 +45,6 @@ class TelegramService implements ServiceInterface
      * @var Factory
      */
     private $factory;
-    /**
-     * Queue of jobs for InstagramService
-     *
-     * @var Queue
-     */
-    public $jobsForInstagram;
 
     /**
      * Constructor
@@ -63,7 +57,6 @@ class TelegramService implements ServiceInterface
         $this->concierge = $concierge;
         $this->tgLog = $telegram;
         $this->loop = $loop;
-        $this->jobsForInstagram = new SplQueue();
         $this->lastUpdate = 0;
         $this->factory = new Factory($this);
     }
@@ -189,8 +182,7 @@ class TelegramService implements ServiceInterface
         if ($this->authenticate($update->message)) {
             $command = $this->handleMessage($update->message);
             if ($command instanceof JobAbstract) {
-                $this->jobsForInstagram->enqueue($command);
-                $this->concierge->notify($this);
+                $this->concierge->notify($this, $command);
                 return;
             }
             $command->execute();
