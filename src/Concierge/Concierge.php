@@ -157,20 +157,8 @@ class Concierge
         foreach ($this->instagram as $instagramInstance) {
             $instagramInstance->startService();
         }
+        
         $concierge->startService();
-
-        // $this->loop->addPeriodicTimer(2, function () use ($concierge) {
-        //     foreach ($this->instagram as $instagram) {
-        //         if (!$instagram->jobsForTelegram->isEmpty()) {
-        //             /** @var JobAbstract $job */
-        //             while (!$instagram->jobsForTelegram->isEmpty()) {
-        //                 $job = $instagram->jobsForTelegram->dequeue();
-        //                 $concierge->sendMessage($job->getText(), $job->getRecipient());
-        //             }
-        //         }
-        //     }
-
-        // });
 
         $this->loop->run();
     }
