@@ -14,7 +14,7 @@ use unreal4u\TelegramAPI\HttpClientRequestHandler;
 
 /**
  * TODO: 
- * 1) tirare fuori instagram / logger
+ * 1)  logger
  * 2) aggiungere altri comandi (send image/ audio/video via tg)
  */
 class Concierge
@@ -51,11 +51,11 @@ class Concierge
     /**
      * Constructor function
      */
-    public function __construct()
+    public function __construct(string $id, Instagram $ig)
     {
         // $this->_logger = $logger;
         $this->loop = Factory::create();
-        $this->instagram[IG_USERNAME] = $this->setupInstagram($this->loop);
+        $this->instagram[$id] = $this->setupInstagram($id, $ig, $this->loop);
         $this->telegram = $this->setupTelegram($this->loop);
     }
 
@@ -68,7 +68,7 @@ class Concierge
      */
     public function addInstagram(string $id, Instagram $ig)
     {
-        $this->instagram[$id] = new InstagramService($id, $ig, $this->loop);
+        $this->instagram[$id] = new InstagramService($this, $id, $ig, $this->loop);
     }
     /**
      * Returns Telegram Service
@@ -96,21 +96,9 @@ class Concierge
      * @param LoopInterface $loop
      * @return InstagramService
      */
-    private function setupInstagram(LoopInterface $loop): InstagramService
+    private function setupInstagram(string $id, Instagram $ig, LoopInterface $loop): InstagramService
     {
-        $ig = new \InstagramAPI\Instagram(false, false);
-        try {
-            $loginResponse = $ig->login(IG_USERNAME, IG_PASSWORD);
-            if ($loginResponse !== null && $loginResponse->isTwoFactorRequired()) {
-                $twoFactorIdentifier = $loginResponse->getTwoFactorInfo()->getTwoFactorIdentifier();
-                $verificationCode = trim(fgets(STDIN));
-                $ig->finishTwoFactorLogin(IG_USERNAME, IG_PASSWORD, $twoFactorIdentifier, $verificationCode);
-            }
-        } catch (\Exception $e) {
-            echo 'Something went wrong: ' . $e->getMessage() . "\n";
-            exit(0);
-        }
-        return new InstagramService($this, IG_USERNAME, $ig, $loop);
+        return new InstagramService($this, $id, $ig, $loop);
     }
 
     /**
@@ -133,11 +121,13 @@ class Concierge
             }
         }
         else{
+            echo "telegram job\n";
             while (!$service->jobsForInstagram->isEmpty()) {
                 $job = $service->jobsForInstagram->dequeue();
                 $job->recipient = [
                     'users' => [$this->getInstagram($job->client)->getInstagram()->people->getUserIdForName($job->recipient)]
                 ];
+
                 $this->getInstagram($job->client)->getInstagram()->direct->sendText($job->recipient, $job->answer);
                 echo "\n inviato dm\n";
             }
@@ -157,7 +147,7 @@ class Concierge
         foreach ($this->instagram as $instagramInstance) {
             $instagramInstance->startService();
         }
-        
+
         $concierge->startService();
 
         $this->loop->run();
