@@ -112,7 +112,7 @@ class InstagramService implements ServiceInterface
                 return new NullCommand();
         }
 
-        return $handler->parsePush();
+        return $handler->retrieveCommand();
     }
 
     /**

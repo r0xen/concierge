@@ -7,8 +7,10 @@ use Concierge\Commands\Job\TelegramSendText;
 use InstagramAPI\Response\Model\DirectThread;
 use InstagramAPI\Response\Model\DirectThreadItem;
 use InstagramAPI\Instagram;
+use Concierge\Models\Direct;
+use Concierge\Commands\CommandInterface;
 
-class HandlerDirect
+class HandlerDirect implements HandlerInterface
 {
 
     private $instagram;
@@ -21,27 +23,44 @@ class HandlerDirect
         $this->push = $push;        
     }
 
-    public function parsePush(){
+    private function parsePush(): Direct{
         $push = $this->push;
         $client = $this->client;
         if ($push->getActionParam('id')) {
             /** @var DirectThread $thread */
             $thread = $this->getThread($push->getActionParam('id'));
+            $from = $thread->getUsers()[0]->getUsername();
 
             if ($push->getActionParam('x')) {
-                $text = "<i>[$client]</i> @" . $thread->getUsers()[0]->getUsername() . ": ";
-
                 foreach ($thread->getItems() as $item) {
                     if ($item->getItemId() == $push->getActionParam('x')) {
-                        $text .= $this->handleItemType($item);
+                        $text = $this->handleItemType($item);
+                        return new Direct($from, $client, $text, $item->getItemType());
                     }
                 }
-            } else {
-                $text = "<i>[$client]</i> <b>pending dm</b> @" . $thread->getUsers()[0]->getUsername() . ": ";
-                $text .= $this->handleItemType($thread->getItems()[0]);
-            }
+            } 
+            $text = $this->handleItemType($thread->getItems()[0]);
+
+            return new Direct($from, $client, $text, $item->getItemType(), true);
+        }
+    }
+
+    public function retrieveCommand(): CommandInterface{
+        $direct = $this->parsePush();
+        if($direct->isPending()){
+            $text = sprintf("<i>[%s] pending dm</i> @%s", $direct->getClient(), $direct->getFrom());
+        }
+        $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
+        
+        if($direct->getType() !== "text"){
+            echo "qui";
+            $text .= sprintf(" sent you a <a href=\"%s\">media</a>", $direct->getText());
             return new TelegramSendText($text, A_USER_CHAT_ID);
         }
+
+        $text .= ": " . $direct->getText();
+        return new TelegramSendText($text, A_USER_CHAT_ID);
+
     }
 
     private function handleItemType(DirectThreadItem $item): string

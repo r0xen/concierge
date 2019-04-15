@@ -2,11 +2,13 @@
 
 namespace Concierge\Service\Handler;
 
-use InstagramAPI\Push\Notification;
-use Concierge\Commands\Job\TelegramSendText;
 use InstagramAPI\Instagram;
+use Concierge\Models\Comment;
+use InstagramAPI\Push\Notification;
+use Concierge\Commands\CommandInterface;
+use Concierge\Commands\Job\TelegramSendText;
 
-class HandlerComment {
+class HandlerComment implements HandlerInterface {
 
     private $instagram;
     private $push;
@@ -18,7 +20,7 @@ class HandlerComment {
         $this->push = $push;        
     }
 
-    public function parsePush(){
+    public function parsePush(): Comment{
         $push = $this->push;
         switch ($push->getActionPath()) {
             case 'comments_v2':
@@ -37,11 +39,15 @@ class HandlerComment {
         $lastComment = $this->instagram->media->getComments($mediaId, $commentId)->getComments();
         $lastComment = $lastComment[sizeof($lastComment)-1];
 
-        $text = "[$this->client] @".$lastComment->getUser()->getUsername()." commented: \"<b>". $lastComment->getText()."\"</b>";
-        $text .= " on your <a href=\"". $this->instagram->media->getPermalink($mediaId)->getPermalink()."\">post</a>";
-        
+        return new Comment($lastComment->getUser()->getUsername(), $this->client, $lastComment->getText(), $this->instagram->media->getPermalink($mediaId)->getPermalink());
+    }
+
+    public function retrieveCommand(): CommandInterface
+    {
+        $comment = $this->parsePush();
+        $text = sprintf('[%s] @%s commented: "%s" on your <a href="%s"> post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(),$comment->getPost());
+
         return new TelegramSendText($text, A_USER_CHAT_ID);
-
-
+        
     }
 }
