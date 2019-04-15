@@ -43,7 +43,14 @@ class HandlerComment implements HandlerInterface {
         $lastComment = $lastComment[count($lastComment)-1]->getText();
         // var_dump($lastComment); exit(); // fix mostra sempre primo messaggio
 
-        return new Comment($username, $this->client, $lastComment, $this->instagram->media->getPermalink($mediaId)->getPermalink(), $mediaId, $commentId['target_comment_id'][0]);
+        return new Comment(
+                        $username, 
+                        $this->client, 
+                        $lastComment, 
+                        $this->instagram->media->getPermalink($mediaId)->getPermalink(), 
+                        $mediaId, 
+                        $commentId['target_comment_id'][0]
+                    );
     }
 
     public function retrieveCommand(): CommandInterface

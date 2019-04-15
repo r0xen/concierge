@@ -20,10 +20,11 @@ class HandlerDirect implements HandlerInterface
     {
         $this->client = $client;
         $this->instagram = $instagram;
-        $this->push = $push;        
+        $this->push = $push;
     }
 
-    private function parsePush(): Direct{
+    private function parsePush(): Direct
+    {
         $push = $this->push;
         $client = $this->client;
         if ($push->getActionParam('id')) {
@@ -38,29 +39,28 @@ class HandlerDirect implements HandlerInterface
                         return new Direct($from, $client, $text, $item->getItemType());
                     }
                 }
-            } 
+            }
             $text = $this->handleItemType($thread->getItems()[0]);
 
             return new Direct($from, $client, $text, $item->getItemType(), true);
         }
     }
 
-    public function retrieveCommand(): CommandInterface{
+    public function retrieveCommand(): CommandInterface
+    {
         $direct = $this->parsePush();
-        if($direct->isPending()){
+        if ($direct->isPending()) {
             $text = sprintf("<i>[%s] pending dm</i> @%s", $direct->getClient(), $direct->getFrom());
         }
         $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
-        
-        if($direct->getType() !== "text"){
-            echo "qui";
+
+        if ($direct->getType() !== "text") {
             $text .= sprintf(' sent you a <a href="%s">media</a>', $direct->getText());
             return new TelegramSendText($text, A_USER_CHAT_ID);
         }
 
         $text .= ": " . $direct->getText();
         return new TelegramSendText($text, A_USER_CHAT_ID);
-
     }
 
     private function handleItemType(DirectThreadItem $item): string
