@@ -51,7 +51,10 @@ class Concierge
     private $loop;
 
     /**
-     * Constructor function
+     * Constructor
+     *
+     * @param string $id
+     * @param Instagram $ig
      */
     public function __construct(string $id, Instagram $ig)
     {
@@ -73,6 +76,7 @@ class Concierge
     {
         $this->instagram[$id] = new InstagramService($this, $id, $ig, $this->loop);
     }
+
     /**
      * Returns Telegram Service
      *
@@ -91,7 +95,7 @@ class Concierge
     private function getInstagram(string $id): InstagramService
     {
         // if client not found then use last used instagram client
-        if(!array_key_exists($id, $this->instagram)){
+        if (!array_key_exists($id, $this->instagram)) {
             $id = $this->lastClient;
         }
         $this->lastClient = $id;
@@ -128,10 +132,11 @@ class Concierge
      * @param JobAbstract $job
      * @return void
      */
-    public function notify(ServiceInterface $service, JobAbstract $job){
-        if($service instanceof InstagramService){
+    public function notify(ServiceInterface $service, JobAbstract $job)
+    {
+        if ($service instanceof InstagramService) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
-        } else{
+        } else {
             $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
         }
     }

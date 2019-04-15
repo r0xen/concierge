@@ -45,8 +45,9 @@ class InstagramService implements ServiceInterface
     private $concierge;
 
     /**
-     * Constructor
+     * Construcot
      *
+     * @param Concierge $concierge
      * @param string $id
      * @param Instagram $instagram
      * @param LoopInterface $loop
@@ -80,7 +81,8 @@ class InstagramService implements ServiceInterface
         return $this->instagram;
     }
 
-    public function sendMessage(string $text, string $recipient){
+    public function sendMessage(string $text, string $recipient)
+    {
         $recipient = [
             'users' => [$this->getInstagram()->people->getUserIdForName($recipient)]
         ];
@@ -98,7 +100,7 @@ class InstagramService implements ServiceInterface
         // todo use dependency manager instead of this crap
         // questi handler vanno instanziati una volta sola, potrebbero anche essere classi statiche.
 
-        switch($push->getCollapseKey()){
+        switch ($push->getCollapseKey()) {
             case 'direct_v2_message':
                 $handler =  new HandlerDirect($this->id, $this->getInstagram(), $push);
                 break;
@@ -111,8 +113,6 @@ class InstagramService implements ServiceInterface
         }
 
         return $handler->parsePush();
-
-    
     }
 
     /**
@@ -143,7 +143,6 @@ class InstagramService implements ServiceInterface
         // $this->getPushService()->on('incoming', Closure::fromCallable([$this, 'orchestrate']));
 
         $this->getPushService()->on('comment', Closure::fromCallable([$this, 'orchestrate']));
-
     }
 
     /**

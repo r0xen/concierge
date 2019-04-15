@@ -2,6 +2,9 @@
 
 namespace Concierge\Service;
 
+/**
+ * Interface implements by all services
+ */
 interface ServiceInterface
 {
     public function startService();
