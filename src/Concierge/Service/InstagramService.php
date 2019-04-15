@@ -12,6 +12,7 @@ use InstagramAPI\Push\Notification;
 use Concierge\Service\Handler\HandlerDirect;
 use Concierge\Service\Handler\HandlerComment;
 use Concierge\Commands\CommandInterface;
+use Concierge\Commands\Job\JobAbstract;
 
 /**
  * Classe Instagram Service
@@ -128,7 +129,7 @@ class InstagramService implements ServiceInterface
     private function orchestrate(Notification $push): void
     {
         $command = $this->handlePush($push);
-        if (!$command instanceof NullCommand) {
+        if ($command instanceof JobAbstract) {
             $this->concierge->notify($this, $command);
         }
     }

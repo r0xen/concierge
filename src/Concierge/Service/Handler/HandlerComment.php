@@ -37,9 +37,13 @@ class HandlerComment implements HandlerInterface {
         ];
 
         $lastComment = $this->instagram->media->getComments($mediaId, $commentId)->getComments();
-        $lastComment = $lastComment[sizeof($lastComment)-1];
-        
-        return new Comment($lastComment->getUser()->getUsername(), $this->client, $lastComment->getText(), $this->instagram->media->getPermalink($mediaId)->getPermalink(), $mediaId, $commentId['target_comment_id'][0]);
+        $username = $lastComment[0]->getUser()->getUsername();
+        // var_dump($lastComment); exit(); // fix mostra sempre primo messaggio
+        $lastComment = $lastComment[count($lastComment)-1]->getPreviewChildComments();
+        $lastComment = $lastComment[count($lastComment)-1]->getText();
+        // var_dump($lastComment); exit(); // fix mostra sempre primo messaggio
+
+        return new Comment($username, $this->client, $lastComment, $this->instagram->media->getPermalink($mediaId)->getPermalink(), $mediaId, $commentId['target_comment_id'][0]);
     }
 
     public function retrieveCommand(): CommandInterface

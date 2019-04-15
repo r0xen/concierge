@@ -50,6 +50,7 @@ class HandlerMessage implements HandlerInterface
                 $recipient = $this->getUsernameFromMessage($message->reply_to_message->text);
 
                 if ($comment !== 0 && $comment < $semiColon) {
+                    // va preso quello giusto di entityies non posso fare cosi
                     $match = explode('#', parse_url($message->reply_to_message->entities[2]->url)['fragment']);
                     $text = '@' . $recipient . " " . $message->text; // vincolo delle api
                     return new InstagramSendComment($client, $text, $match[0], $match[1]);
