@@ -50,7 +50,6 @@ class HandlerMessage implements HandlerInterface
                 $recipient = $this->getUsernameFromMessage($message->reply_to_message->text);
 
                 if ($comment !== 0 && $comment < $semiColon) {
-                    // todo va preso quello giusto di entityies non posso fare cosi
                     foreach($message->reply_to_message->entities as $entity){
                         if($entity->type === 'text_link'){
                             $match = explode('#', parse_url($entity->url)['fragment']);
