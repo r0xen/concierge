@@ -5,24 +5,7 @@ namespace Concierge\Commands;
 use InstagramAPI\Push\Notification;
 use Concierge\Commands\Job\TelegramSendText;
 use InstagramAPI\Instagram;
-/**
-*
- *   Comments:
- *     - comment - "USERNAME commented: "TEXT""
- *       media?id=1111111111111111111_1111111111&forced_preview_comment_id=11111111111111111
- *       comments_v2?media_id=1111111111111111111_1111111111&target_comment_id=11111111111111111
- *     - mentioned_comment - "USERNAME mentioned you in a comment: TEXT..."
- *       media?id=1111111111111111111_1111111111
- *       comments_v2?media_id=1111111111111111111_1111111111
- *     - comment_on_tag - "USERNAME commented on a post you're tagged in."
- *       media?id=1111111111111111111 <- Yep, no author ID here.
- *     - comment_subscribed - "USERNAME also commented on USERNAME's post: "TEXT""
- *       comments_v2?media_id=1111111111111111111_1111111111&target_comment_id=11111111111111111
- *     - comment_subscribed_on_like - "USERNAME commented on a post you liked: TEXT"
- *       comments_v2?media_id=1111111111111111111_1111111111&target_comment_id=11111111111111111
- *     - reply_to_comment_with_threading - "USERNAME replied to your comment on your post: "TEXT""
- *       comments_v2?media_id=1111111111111111111_1111111111&target_comment_id=11111111111111111
- */
+
 class HandlerComment {
 
     private $instagram;
