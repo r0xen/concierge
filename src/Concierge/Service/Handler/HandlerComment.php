@@ -1,6 +1,6 @@
 <?php
 
-namespace Concierge\Commands;
+namespace Concierge\Service\Handler;
 
 use InstagramAPI\Push\Notification;
 use Concierge\Commands\Job\TelegramSendText;

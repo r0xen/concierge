@@ -104,8 +104,10 @@ class Concierge
     }
 
     /**
-     * Creates the Instagram Service
+     * setup instagram service
      *
+     * @param string $id
+     * @param Instagram $ig
      * @param LoopInterface $loop
      * @return InstagramService
      */

@@ -38,12 +38,12 @@ class Factory
      */
     public function createCommandFromMessage(Message $message): CommandInterface
     {
-        if ($message->reply_to_message instanceof Message) {
+        if (isset($message->reply_to_message)) {
             if ($message->text !== null) {
                 return $this->handleTextReply($message->reply_to_message, $message->text);
             }
         }
-        // only two types of messages: reply, and normal ones
+
         /** @var MessageEntity $entity */
         foreach ($message->entities as $entity) {
             switch ($entity->type) {

@@ -9,8 +9,8 @@ use InstagramAPI\Instagram;
 use React\EventLoop\LoopInterface;
 use Concierge\Commands\NullCommand;
 use InstagramAPI\Push\Notification;
-use Concierge\Commands\HandlerDirect;
-use Concierge\Commands\HandlerComment;
+use Concierge\Service\Handler\HandlerDirect;
+use Concierge\Service\Handler\HandlerComment;
 use Concierge\Commands\CommandInterface;
 
 /**
