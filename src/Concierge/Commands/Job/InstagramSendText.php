@@ -40,6 +40,11 @@ class InstagramSendText extends JobAbstract
         $this->client = $client;
     }
 
+
+    public function getClient(): string
+    {
+        return $this->client;
+    }
     /**
      * Returns recipient
      *

@@ -10,7 +10,7 @@ use Concierge\Commands\CommandInterface;
 abstract class JobAbstract implements CommandInterface
 {
 
-    abstract public function getRecipient(): string;
+    abstract public function getClient(): string;
     abstract public function getText(): string;
 
 }

@@ -48,4 +48,9 @@ class TelegramSendText extends JobAbstract
     {
         return $this->recipient;
     }
+
+    public function getClient(): string
+    {
+        return '';
+    }
 }

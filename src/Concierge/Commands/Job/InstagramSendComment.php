@@ -20,11 +20,11 @@ class InstagramSendComment extends JobAbstract
         $this->replyCommentId = $replyCommentId;
     }
 
-    public function getClient()
+    public function getClient(): string
     {
         return $this->client;
     }
-
+    
     public function getRecipient(): string
     {
         return '';

@@ -11,7 +11,7 @@ use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\MessageEntity;
 use Concierge\Commands\Job\InstagramSendComment;
 
-class HandlerMessage implements HandlerInterface    
+class HandlerMessage implements HandlerInterface
 {
     /**
      * Some Commands may be need it
@@ -45,13 +45,13 @@ class HandlerMessage implements HandlerInterface
         if (isset($message->reply_to_message)) {
             if (isset($message->text)) {
                 $comment = strpos($message->reply_to_message->text, "commented");
-                $semiColon = strpos($message->reply_to_message->text,':');
+                $semiColon = strpos($message->reply_to_message->text, ':');
                 $client = $this->getClientFromMessage($message->reply_to_message->text);
                 $recipient = $this->getUsernameFromMessage($message->reply_to_message->text);
-    
-                if($comment !== 0 && $comment < $semiColon){
+
+                if ($comment !== 0 && $comment < $semiColon) {
                     $match = explode('#', parse_url($message->reply_to_message->entities[2]->url)['fragment']);
-                    $text = '@'.$recipient." ".$message->text; // vincolo delle api
+                    $text = '@' . $recipient . " " . $message->text; // vincolo delle api
                     return new InstagramSendComment($client, $text, $match[0], $match[1]);
                 }
                 return $this->handleTextReply($message->reply_to_message, $message->text);
@@ -91,7 +91,7 @@ class HandlerMessage implements HandlerInterface
         $client = $this->getClientFromMessage($message->text);
 
         if ($recipient !== false) {
-            $answer = $answerText ?? str_replace('['. $client .']', '', str_replace('@' . $recipient, '', $message->text));
+            $answer = $answerText ?? str_replace('[' . $client . ']', '', str_replace('@' . $recipient, '', $message->text));
             return new InstagramSendText($answer, $recipient, $client);
         }
         return new NullCommand();
@@ -137,7 +137,7 @@ class HandlerMessage implements HandlerInterface
     {
         $start = strpos($text, '[');
         $end = strpos($text, ']');
-        if(($start && $end) == false){
+        if (($start && $end) == false) {
             return 'default';
         }
         return substr($text, $start + 1, $end - $start - 1);
