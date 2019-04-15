@@ -120,19 +120,19 @@ class Concierge
     {
         return new TelegramService($this, new TgLog(BOT_TOKEN, new HttpClientRequestHandler($loop)), $loop);
     }
+
     /**
-     * Called by services to notify a new job
+     * Get notified by services on new jobs
      *
-     * @param [type] $service
+     * @param ServiceInterface $service
+     * @param JobAbstract $job
      * @return void
      */
     public function notify(ServiceInterface $service, JobAbstract $job){
         if($service instanceof InstagramService){
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
-            echo "\nmessaggio su telegram inviato\n";
         } else{
             $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
-            echo "\ninviato dm\n";
         }
     }
 
@@ -150,7 +150,7 @@ class Concierge
         }
 
         $concierge->startService();
-        
+
         $this->loop->run();
     }
 }

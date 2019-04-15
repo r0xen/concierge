@@ -11,7 +11,6 @@ use React\Promise\PromiseInterface;
 use Concierge\Commands\CommandInterface;
 use unreal4u\TelegramAPI\Telegram\Types\Update;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
-use unreal4u\TelegramAPI\Telegram\Methods\GetFile;
 use unreal4u\TelegramAPI\Telegram\Methods\GetUpdates;
 use unreal4u\TelegramAPI\Telegram\Methods\SendMessage;
 use unreal4u\TelegramAPI\Telegram\Types\Custom\UpdatesArray;
@@ -75,19 +74,7 @@ class TelegramService implements ServiceInterface
 
         return $this->tgLog->performApiRequest($message);
     }
-    /**
-     * Prepares GetFile
-     *
-     * @param string $fileid
-     * @return PromiseInterface
-     */
-    public function getFile(string $fileid): PromiseInterface
-    {
-        $getFile = new GetFile();
-        $getFile->file_id = $fileid;
 
-        return $this->tgLog->performApiRequest($getFile);
-    }
     /**
      * Request Updates
      *
