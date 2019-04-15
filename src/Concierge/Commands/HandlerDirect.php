@@ -8,7 +8,7 @@ use InstagramAPI\Response\Model\DirectThread;
 use InstagramAPI\Response\Model\DirectThreadItem;
 use InstagramAPI\Instagram;
 
-class HandlerPush
+class HandlerDirect
 {
 
     private $instagram;
@@ -21,7 +21,7 @@ class HandlerPush
         $this->push = $push;        
     }
 
-    public function parseDirectPush(){
+    public function parsePush(){
         $push = $this->push;
         $client = $this->client;
         if ($push->getActionParam('id')) {
@@ -29,7 +29,7 @@ class HandlerPush
             $thread = $this->getThread($push->getActionParam('id'));
 
             if ($push->getActionParam('x')) {
-                $text = "[$client] @" . $thread->getUsers()[0]->getUsername() . ": ";
+                $text = "<i>[$client]</i> @" . $thread->getUsers()[0]->getUsername() . ": ";
 
                 foreach ($thread->getItems() as $item) {
                     if ($item->getItemId() == $push->getActionParam('x')) {
@@ -37,7 +37,7 @@ class HandlerPush
                     }
                 }
             } else {
-                $text = "[$client] **pending dm** @" . $thread->getUsers()[0]->getUsername() . ": ";
+                $text = "<i>[$client]</i> <b>pending dm</b> @" . $thread->getUsers()[0]->getUsername() . ": ";
                 $text .= $this->handleItemType($thread->getItems()[0]);
             }
             return new TelegramSendText($text, A_USER_CHAT_ID);

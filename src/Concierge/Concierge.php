@@ -6,7 +6,7 @@ use InstagramAPI\Instagram;
 use React\EventLoop\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
-use Concierge\Commands\JobAbstract;
+use Concierge\Commands\Job\JobAbstract;
 use Concierge\Service\TelegramService;
 use Concierge\Service\InstagramService;
 use unreal4u\TelegramAPI\HttpClientRequestHandler;
@@ -23,7 +23,7 @@ class Concierge
     /**
      * Instance to Instagram Service
      *
-     * @var InstagramService 
+     * @var InstagramService[] 
      */
     private $instagram;
 
@@ -33,6 +33,8 @@ class Concierge
      * @var TelegramService
      */
     private $telegram;
+
+    private $lastClient;
 
     /**
      * Instance to a PSR-3 compatible logger
@@ -56,6 +58,7 @@ class Concierge
         // $this->_logger = $logger;
         $this->loop = Factory::create();
         $this->instagram[$id] = $this->setupInstagram($id, $ig, $this->loop);
+        $this->lastClient = $id;
         $this->telegram = $this->setupTelegram($this->loop);
     }
 
@@ -87,6 +90,12 @@ class Concierge
      */
     private function getInstagram(string $id): InstagramService
     {
+        // if client not found then use last used instagram client
+        if(!array_key_exists($id, $this->instagram)){
+            $id = $this->lastClient;
+        }
+        $this->lastClient = $id;
+
         return $this->instagram[$id];
     }
 
@@ -141,7 +150,7 @@ class Concierge
         }
 
         $concierge->startService();
-
+        
         $this->loop->run();
     }
 }

@@ -3,14 +3,14 @@
 namespace Concierge\Service;
 
 use Closure;
-use SplQueue;
 use InstagramAPI\Push;
 use Concierge\Concierge;
 use InstagramAPI\Instagram;
 use React\EventLoop\LoopInterface;
-use Concierge\Commands\HandlerPush;
 use Concierge\Commands\NullCommand;
 use InstagramAPI\Push\Notification;
+use Concierge\Commands\HandlerDirect;
+use Concierge\Commands\HandlerComment;
 use Concierge\Commands\CommandInterface;
 
 /**
@@ -37,6 +37,11 @@ class InstagramService implements ServiceInterface
      */
     private $pushService;
 
+    /**
+     * Mediator
+     *
+     * @var Concierge
+     */
     private $concierge;
 
     /**
@@ -68,9 +73,9 @@ class InstagramService implements ServiceInterface
     /**
      * Returns Instagram API istance
      *
-     * @return 
+     * @return Instagram
      */
-    private function getInstagram()
+    private function getInstagram(): Instagram
     {
         return $this->instagram;
     }
@@ -90,17 +95,22 @@ class InstagramService implements ServiceInterface
      */
     private function handlePush(Notification $push): CommandInterface
     {
-        // todo per ogni push ttype itera su tutte le factory vedendo se la becca
-        // var_dump($push);
+        // todo use dependency manager instead of this crap
 
         switch($push->getCollapseKey()){
             case 'direct_v2_message':
-                $obj =  new HandlerPush($this->id, $this->getInstagram(), $push);
-                $obj = $obj->parseDirectPush();
-                return $obj;
+                $handler =  new HandlerDirect($this->id, $this->getInstagram(), $push);
+                break;
+            case 'comment':
+            case 'reply_to_comment_with_threading':
+                $handler = new HandlerComment($this->id, $this->getInstagram(), $push);
+                break;
             default:
                 return new NullCommand();
         }
+
+        return $handler->parsePush();
+
     
     }
 
@@ -129,7 +139,11 @@ class InstagramService implements ServiceInterface
 
         $this->getPushService()->on('direct_v2_message', Closure::fromCallable([$this, 'orchestrate']));
         /** log? */
-        // $this->getPushService()->on('incoming', Closure::fromCallable([$this, 'orchestrate']));
+        $this->getPushService()->on('incoming', Closure::fromCallable([$this, 'orchestrate']));
+
+        $this->getPushService()->on('comment', Closure::fromCallable([$this, 'orchestrate']));
+        // $this->getPushService()->on('direct_v2_message', Closure::fromCallable([$this, 'orchestrate']));
+
 
     }
 

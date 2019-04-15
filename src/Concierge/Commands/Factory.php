@@ -118,6 +118,9 @@ class Factory
     {
         $start = strpos($text, '[');
         $end = strpos($text, ']');
+        if(($start && $end) == false){
+            return 'default';
+        }
         return substr($text, $start + 1, $end - $start - 1);
     }
 

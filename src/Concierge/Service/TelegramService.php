@@ -2,7 +2,6 @@
 
 namespace Concierge\Service;
 
-use SplQueue;
 use Concierge\Concierge;
 use Concierge\Commands\Factory;
 use unreal4u\TelegramAPI\TgLog;
@@ -72,6 +71,7 @@ class TelegramService implements ServiceInterface
         $message = new SendMessage();
         $message->chat_id = $chatID;
         $message->text = $text;
+        $message->parse_mode = 'HTML';
 
         return $this->tgLog->performApiRequest($message);
     }
