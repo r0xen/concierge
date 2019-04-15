@@ -89,6 +89,10 @@ class InstagramService implements ServiceInterface
         $this->getInstagram()->direct->sendText($recipient, $text);
     }
 
+    public function sendComment(string $text, string $mediaId, string $replyCommentId){
+        $this->getInstagram()->media->comment($mediaId, $text, $replyCommentId);
+    }
+
     /**
      * Handle Notifications
      * 

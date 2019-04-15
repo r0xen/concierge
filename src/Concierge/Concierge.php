@@ -6,11 +6,13 @@ use InstagramAPI\Instagram;
 use React\EventLoop\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
-use Concierge\Commands\Job\JobAbstract;
 use Concierge\Service\TelegramService;
+use Concierge\Commands\Job\JobAbstract;
 use Concierge\Service\InstagramService;
-use unreal4u\TelegramAPI\HttpClientRequestHandler;
 use Concierge\Service\ServiceInterface;
+use Concierge\Commands\Job\InstagramSendText;
+use Concierge\Commands\Job\InstagramSendComment;
+use unreal4u\TelegramAPI\HttpClientRequestHandler;
 
 /**
  * TODO: 
@@ -138,9 +140,16 @@ class Concierge
     {
         if ($service instanceof InstagramService) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
-        } else {
+            return;
+        } 
+        if($job instanceof InstagramSendText){
             $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
+            return;
         }
+        echo "sto per inviare commento\n";
+        /** @var InstagramSendComment $job */
+        $this->getInstagram($job->getClient())->sendComment($job->getText(), $job->getMediaId(), $job->getReplyCommentId());
+        echo "commento inviato\n";
     }
 
     /**

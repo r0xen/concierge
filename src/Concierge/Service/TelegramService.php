@@ -37,12 +37,7 @@ class TelegramService implements ServiceInterface
      * @var LoopInterface
      */
     private $loop;
-    /**
-     * Commands Factory instance
-     *
-     * @var Factory
-     */
-    private $factory;
+
 
     /**
      * Constructor
@@ -56,7 +51,6 @@ class TelegramService implements ServiceInterface
         $this->tgLog = $telegram;
         $this->loop = $loop;
         $this->lastUpdate = 0;
-        $this->factory = new HandlerMessage($this); // todo e' orrendo
     }
     /**
      * Sends a message
@@ -112,7 +106,8 @@ class TelegramService implements ServiceInterface
      */
     private function handleMessage(Message $message): CommandInterface
     {
-        return $this->factory->createCommandFromMessage($message);
+        $handler = new HandlerMessage($this, $message);
+        return $handler->retrieveCommand();
     }
     /**
      * Long polling async autoupdates
@@ -169,6 +164,7 @@ class TelegramService implements ServiceInterface
         if ($this->authenticate($update->message)) {
             $command = $this->handleMessage($update->message);
             if ($command instanceof JobAbstract) {
+                var_dump($command);
                 $this->concierge->notify($this, $command);
                 return;
             }

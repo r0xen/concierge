@@ -9,8 +9,9 @@ use Concierge\Commands\CommandInterface;
 use Concierge\Commands\Job\InstagramSendText;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\MessageEntity;
+use Concierge\Commands\Job\InstagramSendComment;
 
-class HandlerMessage
+class HandlerMessage implements HandlerInterface    
 {
     /**
      * Some Commands may be need it
@@ -18,15 +19,17 @@ class HandlerMessage
      * @var TelegramService
      */
     private $telegram;
+    private $message;
 
     /**
      * Factory Constructor
      *
      * @param TelegramService $telegram
      */
-    public function __construct(TelegramService $telegram)
+    public function __construct(TelegramService $telegram, Message $message)
     {
         $this->telegram = $telegram;
+        $this->message = $message;
     }
 
     /**
@@ -36,10 +39,21 @@ class HandlerMessage
      * @see https://core.telegram.org/bots/api#message for more info
      * @return CommandInterface
      */
-    public function createCommandFromMessage(Message $message): CommandInterface
+    public function parse(): CommandInterface
     {
+        $message = $this->message;
         if (isset($message->reply_to_message)) {
-            if ($message->text !== null) {
+            if (isset($message->text)) {
+                $comment = strpos($message->reply_to_message->text, "commented");
+                $semiColon = strpos($message->reply_to_message->text,':');
+                $client = $this->getClientFromMessage($message->reply_to_message->text);
+                $recipient = $this->getUsernameFromMessage($message->reply_to_message->text);
+    
+                if($comment !== 0 && $comment < $semiColon){
+                    $match = explode('#', parse_url($message->reply_to_message->entities[2]->url)['fragment']);
+                    $text = '@'.$recipient." ".$message->text; // vincolo delle api
+                    return new InstagramSendComment($client, $text, $match[0], $match[1]);
+                }
                 return $this->handleTextReply($message->reply_to_message, $message->text);
             }
         }
@@ -57,6 +71,11 @@ class HandlerMessage
         }
 
         return new NullCommand();
+    }
+
+    public function retrieveCommand(): CommandInterface
+    {
+        return $this->parse();
     }
 
     /**

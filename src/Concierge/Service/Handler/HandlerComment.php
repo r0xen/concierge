@@ -38,14 +38,17 @@ class HandlerComment implements HandlerInterface {
 
         $lastComment = $this->instagram->media->getComments($mediaId, $commentId)->getComments();
         $lastComment = $lastComment[sizeof($lastComment)-1];
-
-        return new Comment($lastComment->getUser()->getUsername(), $this->client, $lastComment->getText(), $this->instagram->media->getPermalink($mediaId)->getPermalink());
+        return new Comment($lastComment->getUser()->getUsername(), 
+        $this->client, $lastComment->getText(), 
+        $this->instagram->media->getPermalink($mediaId)->getPermalink(), 
+        $mediaId, 
+        $commentId['target_comment_id'][0]);
     }
 
     public function retrieveCommand(): CommandInterface
     {
         $comment = $this->parsePush();
-        $text = sprintf('<i>[%s]</i> @%s commented: "%s" on your <a href="%s"> post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(),$comment->getPost());
+        $text = sprintf('<i>[%s]</i> @%s commented: "%s" on your <a href="%s#%s#%s">post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(),$comment->getPost(), $comment->getMediaId(), $comment->getCommentId());
 
         return new TelegramSendText($text, A_USER_CHAT_ID);
         

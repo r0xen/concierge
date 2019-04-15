@@ -9,13 +9,17 @@ class Comment
     private $to;
     private $text;
     private $post;
+    private $mediaId;
+    private $commentId;
 
-    public function __construct(string $from, string $to, string $text, string $post)
+    public function __construct(string $from, string $to, string $text, string $post, string $mediaId, string $commentId)
     {
         $this->from = $from;
         $this->to = $to;
         $this->text = $text;
         $this->post = $post;
+        $this->mediaId = $mediaId;
+        $this->commentId = $commentId;
     }
 
 
@@ -33,5 +37,13 @@ class Comment
 
     public function getPost(){
         return $this->post;
+    }
+
+    public function getMediaId(){
+        return $this->mediaId;
+    }
+
+    public function getCommentId(){
+        return $this->commentId;
     }
 }
