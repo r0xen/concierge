@@ -1,6 +1,6 @@
 <?php
 
-namespace Concierge\Commands;
+namespace Concierge\Service\Handler;
 
 use Concierge\Commands\HelpCommand;
 use Concierge\Commands\NullCommand;
@@ -10,7 +10,7 @@ use Concierge\Commands\Job\InstagramSendText;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\MessageEntity;
 
-class Factory
+class HandlerMessage
 {
     /**
      * Some Commands may be need it

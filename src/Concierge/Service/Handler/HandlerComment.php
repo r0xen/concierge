@@ -45,7 +45,7 @@ class HandlerComment implements HandlerInterface {
     public function retrieveCommand(): CommandInterface
     {
         $comment = $this->parsePush();
-        $text = sprintf('[%s] @%s commented: "%s" on your <a href="%s"> post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(),$comment->getPost());
+        $text = sprintf('<i>[%s]</i> @%s commented: "%s" on your <a href="%s"> post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(),$comment->getPost());
 
         return new TelegramSendText($text, A_USER_CHAT_ID);
         

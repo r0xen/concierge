@@ -3,7 +3,7 @@
 namespace Concierge\Service;
 
 use Concierge\Concierge;
-use Concierge\Commands\Factory;
+use Concierge\Service\Handler\HandlerMessage;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
 use Concierge\Commands\Job\JobAbstract;
@@ -56,7 +56,7 @@ class TelegramService implements ServiceInterface
         $this->tgLog = $telegram;
         $this->loop = $loop;
         $this->lastUpdate = 0;
-        $this->factory = new Factory($this); // todo e' orrendo
+        $this->factory = new HandlerMessage($this); // todo e' orrendo
     }
     /**
      * Sends a message

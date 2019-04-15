@@ -54,7 +54,7 @@ class HandlerDirect implements HandlerInterface
         
         if($direct->getType() !== "text"){
             echo "qui";
-            $text .= sprintf(" sent you a <a href=\"%s\">media</a>", $direct->getText());
+            $text .= sprintf(' sent you a <a href="%s">media</a>', $direct->getText());
             return new TelegramSendText($text, A_USER_CHAT_ID);
         }
 
