@@ -137,7 +137,7 @@ class Concierge
      * @return void
      */
     public function notify(ServiceInterface $service, JobAbstract $job)
-    {
+    {// service inutile
         if ($service instanceof InstagramService) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
             return;

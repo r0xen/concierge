@@ -42,7 +42,7 @@ class HandlerDirect implements HandlerInterface
             }
             $text = $this->handleItemType($thread->getItems()[0]);
 
-            return new Direct($from, $client, $text, $item->getItemType(), true);
+            return new Direct($from, $client, $text, $thread->getItems()[0]->getItemType(), true);
         }
     }
 
