@@ -54,7 +54,7 @@ class HandlerDirect implements HandlerInterface
         }
         $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
 
-        if ($direct->getType() !== "text") {
+        if ($direct->getType() !== "text" && $direct->getType() !== "reel_share") {
             $text .= sprintf(' sent you a <a href="%s">media</a>', $direct->getText());
             return new TelegramSendText($text, A_USER_CHAT_ID);
         }
@@ -106,6 +106,7 @@ class HandlerDirect implements HandlerInterface
                 $item = $item->getImageVersions2()['candidates'];
                 break;
             case 2:
+                // var_dump($item);
                 $item = $item->getVideoVersions();
                 break;
         }
