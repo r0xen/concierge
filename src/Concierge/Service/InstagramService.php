@@ -90,7 +90,8 @@ class InstagramService implements ServiceInterface
         $this->getInstagram()->direct->sendText($recipient, $text);
     }
 
-    public function sendComment(string $text, string $mediaId, string $replyCommentId){
+    public function sendComment(string $text, string $mediaId, string $replyCommentId)
+    {
         $this->getInstagram()->media->comment($mediaId, $text, $replyCommentId);
     }
 
@@ -130,7 +131,7 @@ class InstagramService implements ServiceInterface
     {
         $command = $this->handlePush($push);
         if ($command instanceof JobAbstract) {
-            $this->concierge->notify($this, $command);
+            $this->concierge->notify($command);
         }
     }
 

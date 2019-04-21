@@ -12,6 +12,7 @@ use Concierge\Service\TelegramService;
 use Concierge\Commands\Job\JobAbstract;
 use Concierge\Service\InstagramService;
 use Concierge\Service\ServiceInterface;
+use Concierge\Commands\Job\TelegramSendText;
 use Concierge\Commands\Job\InstagramSendText;
 use Concierge\Commands\Job\InstagramSendComment;
 use unreal4u\TelegramAPI\HttpClientRequestHandler;
@@ -146,7 +147,7 @@ class Concierge
      */
     public function notify(ServiceInterface $service, JobAbstract $job)
     { // service inutile
-        if ($service instanceof InstagramService) {
+        if ($job instanceof TelegramSendText) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
             $this->logger->debug('New notification from Instagram', array($job));
             return;

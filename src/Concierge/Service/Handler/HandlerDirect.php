@@ -100,7 +100,9 @@ class HandlerDirect implements HandlerInterface
      */
     private function handleRavenMedia(DirectThreadItem $item): string
     {
+
         $item = $item->getVisualMedia()->getMedia();
+
         switch ($item->getMediaType()) {
             case 1:
                 $item = $item->getImageVersions2()['candidates'];

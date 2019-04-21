@@ -161,7 +161,7 @@ class TelegramService implements ServiceInterface
         if ($this->authenticate($update->message)) {
             $command = $this->handleMessage($update->message);
             if ($command instanceof JobAbstract) {
-                $this->concierge->notify($this, $command);
+                $this->concierge->notify($command);
                 return;
             }
             $command->execute();
