@@ -120,7 +120,6 @@ class TelegramService implements ServiceInterface
         $this->loop->addTimer(1, function () use (&$updatePromise) {
             $updatePromise->then(
                 function (UpdatesArray $updatesArray) use (&$updatePromise) {
-                    printf("[+] Called fetch updatePromise.then() \n");
                     /** @var Update $update */
                     foreach ($updatesArray as $update) {
                         if ($update->update_id <= $this->lastUpdate)
@@ -150,9 +149,7 @@ class TelegramService implements ServiceInterface
     }
 
     public function stopService()
-    {
-        
-    }
+    { }
     /**
      * Business logic for updates
      *

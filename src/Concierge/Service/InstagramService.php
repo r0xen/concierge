@@ -107,7 +107,7 @@ class InstagramService implements ServiceInterface
 
         switch ($push->getCollapseKey()) {
             case 'direct_v2_message':
-                $handler =  new HandlerDirect($this->id, $this->getInstagram(), $push);
+                $handler = new HandlerDirect($this->id, $this->getInstagram(), $push);
                 break;
             case 'comment':
             case 'reply_to_comment_with_threading':

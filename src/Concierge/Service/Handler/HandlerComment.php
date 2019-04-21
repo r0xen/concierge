@@ -39,14 +39,14 @@ class HandlerComment implements HandlerInterface
         ];
 
         $lastComment = $this->instagram->media->getComments($mediaId, $commentId)->getComments();
-        $username = $lastComment[0]->getUser()->getUsername(); 
+        $username = $lastComment[0]->getUser()->getUsername();
 
-        if(sizeof($lastComment[count($lastComment) - 1]->getPreviewChildComments()) > 0 ){
+        if (sizeof($lastComment[count($lastComment) - 1]->getPreviewChildComments()) > 0) {
             $lastComment = $lastComment[count($lastComment) - 1]->getPreviewChildComments();
             $lastComment = $lastComment[count($lastComment) - 1]->getText();
-        }else{
-            $lastComment = $lastComment[0]->getText();    
-        }   
+        } else {
+            $lastComment = $lastComment[0]->getText();
+        }
 
         return new Comment(
             $username,

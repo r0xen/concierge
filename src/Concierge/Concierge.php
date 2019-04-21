@@ -1,8 +1,10 @@
-<?php
+<?php declare (strict_types = 1);
 
 namespace Concierge;
 
+use Monolog\Logger;
 use InstagramAPI\Instagram;
+use Psr\Log\LoggerInterface;
 use React\EventLoop\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
@@ -36,12 +38,17 @@ class Concierge
      */
     private $telegram;
 
+    /**
+     * last client used
+     *
+     * @var string
+     */
     private $lastClient;
 
     /**
      * Instance to a PSR-3 compatible logger
      *
-     * @var Monolog\Logger
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -58,13 +65,13 @@ class Concierge
      * @param string $id
      * @param Instagram $ig
      */
-    public function __construct(string $id, Instagram $ig)
+    public function __construct(string $id, Instagram $ig, Logger $logger)
     {
-        // $this->_logger = $logger;
+        $this->logger = $logger;
         $this->loop = Factory::create();
-        $this->instagram[$id] = $this->setupInstagram($id, $ig, $this->loop);
+        $this->instagram[$id] = $this->setupInstagram($id, $ig, $this->loop, $logger);
         $this->lastClient = $id;
-        $this->telegram = $this->setupTelegram($this->loop);
+        $this->telegram = $this->setupTelegram($this->loop, $logger);
     }
 
     /**
@@ -77,6 +84,7 @@ class Concierge
     public function addInstagram(string $id, Instagram $ig)
     {
         $this->instagram[$id] = new InstagramService($this, $id, $ig, $this->loop);
+        $this->logger->debug('New instagram account added', array($id, $ig));
     }
 
     /**
@@ -137,19 +145,22 @@ class Concierge
      * @return void
      */
     public function notify(ServiceInterface $service, JobAbstract $job)
-    {// service inutile
+    { // service inutile
         if ($service instanceof InstagramService) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
-            return;
-        } 
-        if($job instanceof InstagramSendText){
-            $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
+            $this->logger->debug('New notification from Instagram', array($job));
             return;
         }
-        echo "sto per inviare commento\n";
+        if ($job instanceof InstagramSendText) {
+            $this->getInstagram($job->client)->sendMessage($job->getText(), $job->getRecipient());
+            $this->logger->debug('New DM sent', array($job));
+            return;
+        }
+        // echo "sto per inviare commento\n";
         /** @var InstagramSendComment $job */
         $this->getInstagram($job->getClient())->sendComment($job->getText(), $job->getMediaId(), $job->getReplyCommentId());
-        echo "commento inviato\n";
+        $this->logger->debug('New comment sent', array($job));
+        // echo "commento inviato\n";
     }
 
     /**

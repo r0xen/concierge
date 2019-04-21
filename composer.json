@@ -1,7 +1,8 @@
 {
   "require": {
     "unreal4u/telegram-api": "~3.4",
-    "mgp25/instagram-php": "dev-master"
+    "mgp25/instagram-php": "dev-master",
+    "monolog/monolog": "1.24.*"
   },
   "autoload": {
     "psr-0": {"Concierge": "src/"}
