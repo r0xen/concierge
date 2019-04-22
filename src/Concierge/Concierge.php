@@ -4,24 +4,17 @@ namespace Concierge;
 
 use Monolog\Logger;
 use InstagramAPI\Instagram;
-use Psr\Log\LoggerInterface;
 use React\EventLoop\Factory;
 use unreal4u\TelegramAPI\TgLog;
 use React\EventLoop\LoopInterface;
 use Concierge\Service\TelegramService;
 use Concierge\Commands\Job\JobAbstract;
 use Concierge\Service\InstagramService;
-use Concierge\Service\ServiceInterface;
 use Concierge\Commands\Job\TelegramSendText;
 use Concierge\Commands\Job\InstagramSendText;
 use Concierge\Commands\Job\InstagramSendComment;
 use unreal4u\TelegramAPI\HttpClientRequestHandler;
 
-/**
- * TODO: 
- * 1)  logger
- * 2) aggiungere altri comandi (send image/ audio/video via tg)
- */
 class Concierge
 {
 

@@ -1,7 +1,6 @@
-<?php
-declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
-include __DIR__.'/../vendor/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
 use Concierge\Concierge;
 
 define('BOT_TOKEN', 'BOT_TOKEN');
@@ -14,17 +13,17 @@ define('IG_PASSWORD', 'FIRST_ACCOUNT_PASSWORD');
 
 
 $ig = new \InstagramAPI\Instagram(false, false);
-        try {
-            $loginResponse = $ig->login(IG_USERNAME, IG_PASSWORD);
-            if ($loginResponse !== null && $loginResponse->isTwoFactorRequired()) {
-                $twoFactorIdentifier = $loginResponse->getTwoFactorInfo()->getTwoFactorIdentifier();
-                $verificationCode = trim(fgets(STDIN));
-                $ig->finishTwoFactorLogin(IG_USERNAME, IG_PASSWORD, $twoFactorIdentifier, $verificationCode);
-            }
-        } catch (\Exception $e) {
-            echo 'Something went wrong: ' . $e->getMessage() . "\n";
-            exit(0);
-        }
+try {
+    $loginResponse = $ig->login(IG_USERNAME, IG_PASSWORD);
+    if ($loginResponse !== null && $loginResponse->isTwoFactorRequired()) {
+        $twoFactorIdentifier = $loginResponse->getTwoFactorInfo()->getTwoFactorIdentifier();
+        $verificationCode = trim(fgets(STDIN));
+        $ig->finishTwoFactorLogin(IG_USERNAME, IG_PASSWORD, $twoFactorIdentifier, $verificationCode);
+    }
+} catch (\Exception $e) {
+    echo 'Something went wrong: ' . $e->getMessage() . "\n";
+    exit(0);
+}
 
 $mc = new Concierge(IG_USERNAME, $ig);
 
