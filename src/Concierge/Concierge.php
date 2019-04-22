@@ -139,7 +139,7 @@ class Concierge
      * @return void
      */
     public function notify(JobAbstract $job)
-    { // service inutile
+    {
         if ($job instanceof TelegramSendText) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
             $this->logger->debug('New notification from Instagram', array($job->getRecipient(), $job->getText()));
