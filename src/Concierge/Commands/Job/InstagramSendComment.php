@@ -24,7 +24,7 @@ class InstagramSendComment extends JobAbstract
     {
         return $this->client;
     }
-    
+
     public function getRecipient(): string
     {
         return '';

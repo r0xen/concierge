@@ -49,7 +49,7 @@ class Concierge
     /**
      * Instance to a PSR-3 compatible logger
      *
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -65,6 +65,7 @@ class Concierge
      *
      * @param string $id
      * @param Instagram $ig
+     * @param Logger $logger
      */
     public function __construct(string $id, Instagram $ig, Logger $logger)
     {
@@ -141,15 +142,14 @@ class Concierge
     /**
      * Get notified by services on new jobs
      *
-     * @param ServiceInterface $service
      * @param JobAbstract $job
      * @return void
      */
-    public function notify(ServiceInterface $service, JobAbstract $job)
+    public function notify(JobAbstract $job)
     { // service inutile
         if ($job instanceof TelegramSendText) {
             $this->getTelegram()->sendMessage($job->getText(), $job->getRecipient());
-            $this->logger->debug('New notification from Instagram', array($job));
+            $this->logger->debug('New notification from Instagram', array($job->getRecipient(), $job->getText()));
             return;
         }
         if ($job instanceof InstagramSendText) {
@@ -157,11 +157,9 @@ class Concierge
             $this->logger->debug('New DM sent', array($job));
             return;
         }
-        // echo "sto per inviare commento\n";
         /** @var InstagramSendComment $job */
         $this->getInstagram($job->getClient())->sendComment($job->getText(), $job->getMediaId(), $job->getReplyCommentId());
         $this->logger->debug('New comment sent', array($job));
-        // echo "commento inviato\n";
     }
 
     /**

@@ -12,17 +12,37 @@ use Concierge\Commands\CommandInterface;
 
 class HandlerDirect implements HandlerInterface
 {
-
+    /**
+     * Instance to instagram service
+     *
+     * @var Instagram
+     */
     private $instagram;
+    /**
+     * Push notif
+     *
+     * @var Push
+     */
     private $push;
 
+    /**
+     * Constructor
+     *
+     * @param string $client
+     * @param Instagram $instagram
+     * @param Notification $push
+     */
     public function __construct(string $client, Instagram $instagram, Notification $push)
     {
         $this->client = $client;
         $this->instagram = $instagram;
         $this->push = $push;
     }
-
+    /**
+     * Parses a direct push notification
+     *
+     * @return Direct
+     */
     private function parsePush(): Direct
     {
         $push = $this->push;
@@ -46,6 +66,11 @@ class HandlerDirect implements HandlerInterface
         }
     }
 
+    /**
+     * Returns the Job to do
+     *
+     * @return CommandInterface
+     */
     public function retrieveCommand(): CommandInterface
     {
         $direct = $this->parsePush();
@@ -62,7 +87,12 @@ class HandlerDirect implements HandlerInterface
         $text .= ": " . $direct->getText();
         return new TelegramSendText($text, A_USER_CHAT_ID);
     }
-
+    /**
+     * Helper function switch to right handler according to item type
+     *
+     * @param DirectThreadItem $item
+     * @return string
+     */
     private function handleItemType(DirectThreadItem $item): string
     {
         switch ($item->getItemType()) {
@@ -101,15 +131,14 @@ class HandlerDirect implements HandlerInterface
     private function handleRavenMedia(DirectThreadItem $item): string
     {
 
-        $item = $item->getVisualMedia()->getMedia();
+        $item = $item->getVisualMedia()['media'];
 
-        switch ($item->getMediaType()) {
+        switch ($item['media_type']) {
             case 1:
-                $item = $item->getImageVersions2()['candidates'];
+                $item = $item['image_versions2']['candidates'];
                 break;
             case 2:
-                // var_dump($item);
-                $item = $item->getVideoVersions();
+                $item = $item['video_versions'];
                 break;
         }
         return $item[0]['url'];
@@ -130,6 +159,7 @@ class HandlerDirect implements HandlerInterface
         }
         return $item[0]->getUrl();
     }
+
     /**
      * Handle Audio items
      *
@@ -140,6 +170,7 @@ class HandlerDirect implements HandlerInterface
     {
         return $item->getVoiceMedia()['media']['audio']['audio_src'];
     }
+
     /**
      * HandleReelShare
      *

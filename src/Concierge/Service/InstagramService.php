@@ -81,7 +81,13 @@ class InstagramService implements ServiceInterface
     {
         return $this->instagram;
     }
-
+    /**
+     * send Instagram DM
+     *
+     * @param string $text
+     * @param string $recipient
+     * @return void
+     */
     public function sendMessage(string $text, string $recipient)
     {
         $recipient = [
@@ -90,6 +96,14 @@ class InstagramService implements ServiceInterface
         $this->getInstagram()->direct->sendText($recipient, $text);
     }
 
+    /**
+     * Send instagram comment
+     *
+     * @param string $text
+     * @param string $mediaId
+     * @param string $replyCommentId
+     * @return void
+     */
     public function sendComment(string $text, string $mediaId, string $replyCommentId)
     {
         $this->getInstagram()->media->comment($mediaId, $text, $replyCommentId);
@@ -103,9 +117,6 @@ class InstagramService implements ServiceInterface
      */
     private function handlePush(Notification $push): CommandInterface
     {
-        // todo use dependency manager instead of this crap
-        // questi handler vanno instanziati una volta sola, potrebbero anche essere classi statiche.
-
         switch ($push->getCollapseKey()) {
             case 'direct_v2_message':
                 $handler = new HandlerDirect($this->id, $this->getInstagram(), $push);
@@ -145,8 +156,6 @@ class InstagramService implements ServiceInterface
         $this->getPushService()->start();
 
         $this->getPushService()->on('direct_v2_message', Closure::fromCallable([$this, 'orchestrate']));
-        /** log? */
-        // $this->getPushService()->on('incoming', Closure::fromCallable([$this, 'orchestrate']));
 
         $this->getPushService()->on('comment', Closure::fromCallable([$this, 'orchestrate']));
     }

@@ -24,6 +24,11 @@ class TelegramService implements ServiceInterface
      */
     private $tgLog;
 
+    /**
+     * Concierge instance
+     *
+     * @var Concierge
+     */
     private $concierge;
     /**
      * ID last update fetched
@@ -31,6 +36,7 @@ class TelegramService implements ServiceInterface
      * @var int
      */
     private $lastUpdate;
+
     /**
      * EventLoop
      *
@@ -38,10 +44,10 @@ class TelegramService implements ServiceInterface
      */
     private $loop;
 
-
     /**
      * Constructor
      *
+     * @param Concierge $concierge
      * @param TgLog $telegram
      * @param LoopInterface $loop
      */
@@ -150,6 +156,7 @@ class TelegramService implements ServiceInterface
 
     public function stopService()
     { }
+
     /**
      * Business logic for updates
      *
