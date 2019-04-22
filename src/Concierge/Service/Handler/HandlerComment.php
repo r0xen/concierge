@@ -11,17 +11,38 @@ use Concierge\Commands\Job\TelegramSendText;
 class HandlerComment implements HandlerInterface
 {
 
+    /**
+     * Instance to instagram service
+     *
+     * @var Instagram
+     */
     private $instagram;
+    /**
+     * Push notif
+     *
+     * @var Push
+     */
     private $push;
 
+    /**
+     * Constructor
+     *
+     * @param string $client
+     * @param Instagram $instagram
+     * @param Notification $push
+     */
     public function __construct(string $client, Instagram $instagram, Notification $push)
     {
         $this->client = $client;
         $this->instagram = $instagram;
         $this->push = $push;
     }
-
-    public function parsePush(): Comment
+    /**
+     * Parse a comment push notif
+     *
+     * @return Comment
+     */
+    private function parsePush(): Comment
     {
         $push = $this->push;
         switch ($push->getActionPath()) {
@@ -58,6 +79,11 @@ class HandlerComment implements HandlerInterface
         );
     }
 
+    /**
+     * returns job to do
+     *
+     * @return CommandInterface
+     */
     public function retrieveCommand(): CommandInterface
     {
         $comment = $this->parsePush();
