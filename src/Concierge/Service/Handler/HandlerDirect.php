@@ -3,65 +3,36 @@
 namespace Concierge\Service\Handler;
 
 use InstagramAPI\Push\Notification;
-use Concierge\Commands\Job\TelegramSendText;
 use InstagramAPI\Response\Model\DirectThread;
 use InstagramAPI\Response\Model\DirectThreadItem;
 use InstagramAPI\Instagram;
 use Concierge\Models\Direct;
-use Concierge\Commands\CommandInterface;
 
 class HandlerDirect implements HandlerInterface
 {
-    /**
-     * Instance to instagram service
-     *
-     * @var Instagram
-     */
-    private $instagram;
-    /**
-     * Push notif
-     *
-     * @var Notification
-     */
-    private $push;
 
-    /**
-     * Constructor
-     *
-     * @param string $client
-     * @param Instagram $instagram
-     * @param Notification $push
-     */
-    public function __construct(string $client, Instagram $instagram, Notification $push)
-    {
-        $this->client = $client;
-        $this->instagram = $instagram;
-        $this->push = $push;
-    }
     /**
      * Parses a direct push notification
      *
      * @return Direct
      */
-    private function parsePush(): Direct
+    public static function parsePush(string $client, Instagram $ig, Notification $push): Direct
     {
-        $push = $this->push;
-        $push->var_dump($push);
-        $client = $this->client;
+        var_dump($push);
         if ($push->getActionParam('id')) {
             /** @var DirectThread $thread */
-            $thread = $this->getThread($push->getActionParam('id'));
+            $thread = self::getThread($ig, $push->getActionParam('id'));
             $from = $thread->getUsers()[0]->getUsername();
 
             if ($push->getActionParam('t') === 'p') { // pending request
-                $text = $this->handleItemType($thread->getItems()[0]);
+                $text = self::handleItemType($thread->getItems()[0]);
                 return new Direct($from, $client, $text, $thread->getItems()[0]->getItemType(), true);
             }
 
             if ($push->getActionParam('x')) {
                 foreach ($thread->getItems() as $item) {
                     if ($item->getItemId() == $push->getActionParam('x')) {
-                        $text = $this->handleItemType($item);
+                        $text = self::handleItemType($item);
                         return new Direct($from, $client, $text, $item->getItemType());
                     }
                 }
@@ -72,47 +43,24 @@ class HandlerDirect implements HandlerInterface
     }
 
     /**
-     * Returns the Job to do
-     *
-     * @return CommandInterface
-     */
-    public function retrieveCommand(): CommandInterface
-    {
-        $direct = $this->parsePush();
-
-        if ($direct->isPending()) {
-            $text = sprintf("<i>[%s] pending dm</i> @%s", $direct->getClient(), $direct->getFrom());
-        } else {
-            $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
-        }
-
-        if ($direct->getType() !== "text" && $direct->getType() !== "reel_share") {
-            $text .= sprintf(' sent you a <a href="%s">media</a>', $direct->getText());
-            return new TelegramSendText($text, A_USER_CHAT_ID);
-        }
-
-        $text .= ": " . $direct->getText();
-        return new TelegramSendText($text, A_USER_CHAT_ID);
-    }
-    /**
      * Helper function switch to right handler according to item type
      *
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleItemType(DirectThreadItem $item): string
+    public static function handleItemType(DirectThreadItem $item): string
     {
         switch ($item->getItemType()) {
             case 'text':
-                return $this->handleText($item);
+                return self::handleText($item);
             case 'raven_media':
-                return $this->handleRavenMedia($item);
+                return self::handleRavenMedia($item);
             case 'media':
-                return $this->handleMedia($item);
+                return self::handleMedia($item);
             case 'voice_media':
-                return $this->handleAudio($item);
+                return self::handleAudio($item);
             case 'reel_share':
-                return $this->handleReelShare($item); // story reply
+                return self::handleReelShare($item); // story reply
             default:
                 return '';
         }
@@ -124,9 +72,9 @@ class HandlerDirect implements HandlerInterface
      * @param string $id
      * @return DirectThread
      */
-    private function getThread(string $id): DirectThread
+    private static function getThread(Instragram $instagram, string $id): DirectThread
     {
-        return $this->instagram->direct->getThread($id)->getThread();
+        return $instagram->direct->getThread($id)->getThread();
     }
 
     /**
@@ -135,7 +83,7 @@ class HandlerDirect implements HandlerInterface
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleRavenMedia(DirectThreadItem $item): string
+    private static function handleRavenMedia(DirectThreadItem $item): string
     {
 
         $item = $item->getVisualMedia()['media'];
@@ -157,7 +105,7 @@ class HandlerDirect implements HandlerInterface
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleMedia(DirectThreadItem $item): string
+    private static function handleMedia(DirectThreadItem $item): string
     {
         if ($item->getMedia()->isVideoVersions()) {
             $item = $item->getMedia()->getVideoVersions();
@@ -173,7 +121,7 @@ class HandlerDirect implements HandlerInterface
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleAudio(DirectThreadItem $item): string
+    private static function handleAudio(DirectThreadItem $item): string
     {
         return $item->getVoiceMedia()['media']['audio']['audio_src'];
     }
@@ -184,7 +132,7 @@ class HandlerDirect implements HandlerInterface
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleReelShare(DirectThreadItem $item): string
+    private static function handleReelShare(DirectThreadItem $item): string
     {
         return $item->getReelShare()->getText();
     }
@@ -195,7 +143,7 @@ class HandlerDirect implements HandlerInterface
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleText(DirectThreadItem $item): string
+    private static function handleText(DirectThreadItem $item): string
     {
         return $item->getText();
     }

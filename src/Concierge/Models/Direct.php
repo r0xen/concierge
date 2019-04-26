@@ -2,7 +2,8 @@
 
 namespace Concierge\Models;
 
-class Direct{
+class Direct extends ModelAbstract
+{
     private $from;
     private $to;
     private $text;
@@ -18,29 +19,33 @@ class Direct{
         $this->pending = $pending;
     }
 
-    public function getFrom(){
+    public function getFrom()
+    {
         return $this->from;
     }
 
-    public function getClient(){
+    public function getClient()
+    {
         return $this->to;
     }
 
-    public function getText(){
+    public function getText()
+    {
         return $this->text;
     }
 
-    public function getType(){
+    public function getType()
+    {
         return $this->type;
     }
 
-    public function isPending(){
+    public function isPending()
+    {
         return $this->pending;
     }
 
-    public function setPending(bool $pending){
+    public function setPending(bool $pending)
+    {
         $this->pending = $pending;
     }
-
-
 }

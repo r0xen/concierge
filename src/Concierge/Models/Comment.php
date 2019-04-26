@@ -2,7 +2,7 @@
 
 namespace Concierge\Models;
 
-class Comment
+class Comment extends ModelAbstract
 {
 
     private $from;
@@ -23,27 +23,33 @@ class Comment
     }
 
 
-    public function getFrom(){
+    public function getFrom()
+    {
         return $this->from;
     }
 
-    public function getClient(){
+    public function getClient()
+    {
         return $this->to;
     }
 
-    public function getText(){
+    public function getText()
+    {
         return $this->text;
     }
 
-    public function getPost(){
+    public function getPost()
+    {
         return $this->post;
     }
 
-    public function getMediaId(){
+    public function getMediaId()
+    {
         return $this->mediaId;
     }
 
-    public function getCommentId(){
+    public function getCommentId()
+    {
         return $this->commentId;
     }
 }

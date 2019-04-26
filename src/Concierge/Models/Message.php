@@ -2,7 +2,7 @@
 
 namespace Concierge\Models;
 
-class Message
+class Message extends ModelAbstract
 {
     private $from;
     private $to;
@@ -21,27 +21,33 @@ class Message
         $this->reply = $reply;
     }
 
-    public function getFrom(){
+    public function getFrom()
+    {
         return $this->from;
     }
 
-    public function getClient(){
+    public function getClient()
+    {
         return $this->to;
     }
 
-    public function getText(){
+    public function getText()
+    {
         return $this->text;
     }
 
-    public function getType(){
+    public function getType()
+    {
         return $this->type;
     }
-    
-    public function getQuotedText(){
+
+    public function getQuotedText()
+    {
         return $this->quotedText;
     }
 
-    public function isReply(){
+    public function isReply()
+    {
         return $this->reply;
     }
 }
