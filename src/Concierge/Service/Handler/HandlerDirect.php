@@ -46,11 +46,17 @@ class HandlerDirect implements HandlerInterface
     private function parsePush(): Direct
     {
         $push = $this->push;
+        var_dump($push);
         $client = $this->client;
         if ($push->getActionParam('id')) {
             /** @var DirectThread $thread */
             $thread = $this->getThread($push->getActionParam('id'));
             $from = $thread->getUsers()[0]->getUsername();
+
+            if ($push->getActionParam('t') === 'p') { // pending request
+                $text = $this->handleItemType($thread->getItems()[0]);
+                return new Direct($from, $client, $text, $thread->getItems()[0]->getItemType(), true);
+            }
 
             if ($push->getActionParam('x')) {
                 foreach ($thread->getItems() as $item) {
@@ -59,10 +65,9 @@ class HandlerDirect implements HandlerInterface
                         return new Direct($from, $client, $text, $item->getItemType());
                     }
                 }
+            } else {
+                return new Direct($from, $client, 'liked your message', 'text');
             }
-            $text = $this->handleItemType($thread->getItems()[0]);
-
-            return new Direct($from, $client, $text, $thread->getItems()[0]->getItemType(), true);
         }
     }
 
@@ -74,10 +79,12 @@ class HandlerDirect implements HandlerInterface
     public function retrieveCommand(): CommandInterface
     {
         $direct = $this->parsePush();
+
         if ($direct->isPending()) {
             $text = sprintf("<i>[%s] pending dm</i> @%s", $direct->getClient(), $direct->getFrom());
+        } else {
+            $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
         }
-        $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
 
         if ($direct->getType() !== "text" && $direct->getType() !== "reel_share") {
             $text .= sprintf(' sent you a <a href="%s">media</a>', $direct->getText());
