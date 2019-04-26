@@ -2,11 +2,12 @@
 
 namespace Concierge\Service\Handler;
 
-use InstagramAPI\Push\Notification;
-use InstagramAPI\Response\Model\DirectThread;
-use InstagramAPI\Response\Model\DirectThreadItem;
 use InstagramAPI\Instagram;
 use Concierge\Models\Direct;
+use InstagramAPI\Push\Notification;
+use Concierge\Commands\Job\TelegramSendText;
+use InstagramAPI\Response\Model\DirectThread;
+use InstagramAPI\Response\Model\DirectThreadItem;
 
 class HandlerDirect implements HandlerInterface
 {
@@ -40,6 +41,23 @@ class HandlerDirect implements HandlerInterface
                 return new Direct($from, $client, $push->getMessage(), 'text');
             }
         }
+    }
+
+    public static function retrieveCommand(Direct $direct): CommandInterface
+    {
+        if ($direct->isPending()) {
+            $text = sprintf("<i>[%s] pending dm</i> @%s", $direct->getClient(), $direct->getFrom());
+        } else {
+            $text = sprintf("<i>[%s]</i> @%s", $direct->getClient(), $direct->getFrom());
+        }
+
+        if ($direct->getType() !== "text" && $direct->getType() !== "reel_share") {
+            $text .= sprintf(' sent you a <a href="%s">media</a>', $direct->getText());
+            return new TelegramSendText($text, A_USER_CHAT_ID);
+        }
+
+        $text .= ": " . $direct->getText();
+        return new TelegramSendText($text, A_USER_CHAT_ID);
     }
 
     /**
