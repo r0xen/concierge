@@ -21,7 +21,7 @@ class HandlerDirect implements HandlerInterface
     /**
      * Push notif
      *
-     * @var Push
+     * @var Notification
      */
     private $push;
 
@@ -46,7 +46,7 @@ class HandlerDirect implements HandlerInterface
     private function parsePush(): Direct
     {
         $push = $this->push;
-        var_dump($push);
+        $push->var_dump($push);
         $client = $this->client;
         if ($push->getActionParam('id')) {
             /** @var DirectThread $thread */
@@ -66,7 +66,7 @@ class HandlerDirect implements HandlerInterface
                     }
                 }
             } else {
-                return new Direct($from, $client, 'liked your message', 'text');
+                return new Direct($from, $client, $push->getMessage(), 'text');
             }
         }
     }
