@@ -22,7 +22,7 @@ class Operator
 
     public function __construct()
     { }
-
+    // job speciali da telegram ad instagram ( /dm e altre robe simili)
     public function handleCommand(string $client, Instagram $instagram, CommandInterface $command)
     {
         // se dmpending
@@ -31,14 +31,19 @@ class Operator
         foreach ($pendingInbox->getThreads() as $thread) {
             $from = $thread->getUsers()[0]->getUsername();
             foreach ($thread->getItems() as $pendingItem) {
-                $pendingDirect[] = new Direct(
-                    $from,
-                    $client,
-                    HandlerDirect::handleItemType($pendingItem),
-                    $pendingItem->getItemType()
+                $pendingDirect[] = HandlerDirect::retrieveCommand(
+                    new Direct(
+                        $from,
+                        $client,
+                        HandlerDirect::handleItemType($pendingItem),
+                        $pendingItem->getItemType(),
+                        true
+                    )
                 );
             }
         }
+
+
     }
     // public function getPending()
     // {

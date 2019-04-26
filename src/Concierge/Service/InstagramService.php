@@ -109,6 +109,7 @@ class InstagramService implements ServiceInterface
         $this->getInstagram()->media->comment($mediaId, $text, $replyCommentId);
     }
 
+
     /**
      * Handle Notifications
      * 

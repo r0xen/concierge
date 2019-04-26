@@ -150,9 +150,11 @@ class Concierge
             $this->logger->debug('New DM sent', array($job));
             return;
         }
-        /** @var InstagramSendComment $job */
-        $this->getInstagram($job->getClient())->sendComment($job->getText(), $job->getMediaId(), $job->getReplyCommentId());
-        $this->logger->debug('New comment sent', array($job));
+        if ($job instanceof InstagramSendComment) {
+            $this->getInstagram($job->getClient())->sendComment($job->getText(), $job->getMediaId(), $job->getReplyCommentId());
+            $this->logger->debug('New comment sent', array($job));
+            return;
+        }
     }
 
     /**
