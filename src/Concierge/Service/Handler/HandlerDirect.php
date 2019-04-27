@@ -32,7 +32,7 @@ class HandlerDirect implements HandlerInterface
      * @param Instagram $instagram
      * @param Notification $push
      */
-    public function __construct(string $client, Instagram $instagram, Notification $push)
+    public function __construct(string $client = null, Instagram $instagram = null, Notification $push = null)
     {
         $this->client = $client;
         $this->instagram = $instagram;
@@ -46,7 +46,7 @@ class HandlerDirect implements HandlerInterface
     private function parsePush(): Direct
     {
         $push = $this->push;
-        $push->var_dump($push);
+        var_dump($push);
         $client = $this->client;
         if ($push->getActionParam('id')) {
             /** @var DirectThread $thread */
@@ -70,16 +70,8 @@ class HandlerDirect implements HandlerInterface
             }
         }
     }
-
-    /**
-     * Returns the Job to do
-     *
-     * @return CommandInterface
-     */
-    public function retrieveCommand(): CommandInterface
+    public function createJob(Direct $direct)
     {
-        $direct = $this->parsePush();
-
         if ($direct->isPending()) {
             $text = sprintf("<i>[%s] pending dm</i> @%s", $direct->getClient(), $direct->getFrom());
         } else {
@@ -95,12 +87,23 @@ class HandlerDirect implements HandlerInterface
         return new TelegramSendText($text, A_USER_CHAT_ID);
     }
     /**
+     * Returns the Job to do
+     *
+     * @return CommandInterface
+     */
+    public function retrieveCommand(): CommandInterface
+    {
+        $direct = $this->parsePush();
+        return self::createJob($direct);
+    }
+
+    /**
      * Helper function switch to right handler according to item type
      *
      * @param DirectThreadItem $item
      * @return string
      */
-    private function handleItemType(DirectThreadItem $item): string
+    public function handleItemType(DirectThreadItem $item): string
     {
         switch ($item->getItemType()) {
             case 'text':

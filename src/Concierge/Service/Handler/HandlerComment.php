@@ -79,6 +79,12 @@ class HandlerComment implements HandlerInterface
         );
     }
 
+    public static function createJob(Comment $comment)
+    {
+        $text = sprintf('<i>[%s]</i> @%s commented: "%s" on your <a href="%s#%s#%s">post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(), $comment->getPost(), $comment->getMediaId(), $comment->getCommentId());
+        return new TelegramSendText($text, A_USER_CHAT_ID);
+    }
+
     /**
      * returns job to do
      *
@@ -87,8 +93,6 @@ class HandlerComment implements HandlerInterface
     public function retrieveCommand(): CommandInterface
     {
         $comment = $this->parsePush();
-        $text = sprintf('<i>[%s]</i> @%s commented: "%s" on your <a href="%s#%s#%s">post</a>', $comment->getClient(), $comment->getFrom(), $comment->getText(), $comment->getPost(), $comment->getMediaId(), $comment->getCommentId());
-
-        return new TelegramSendText($text, A_USER_CHAT_ID);
+        return self::createJob($comment);
     }
 }

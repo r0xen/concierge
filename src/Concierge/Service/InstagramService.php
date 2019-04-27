@@ -13,6 +13,7 @@ use Concierge\Service\Handler\HandlerDirect;
 use Concierge\Service\Handler\HandlerComment;
 use Concierge\Commands\CommandInterface;
 use Concierge\Commands\Job\JobAbstract;
+use Concierge\Service\Handler\Operator;
 
 /**
  * Classe Instagram Service
@@ -22,7 +23,7 @@ class InstagramService implements ServiceInterface
     /**
      * Instance to Instagram API
      *
-     * @var InstagramAPI\Instagram
+     * @var Instagram
      */
     private $instagram;
     /**
@@ -96,6 +97,16 @@ class InstagramService implements ServiceInterface
         $this->getInstagram()->direct->sendText($recipient, $text);
     }
 
+    public function operate(JobAbstract $job)
+    {
+        $operator = new Operator($this->id, $this->getInstagram());
+        $jobs = $operator->handleCommand($job);
+        foreach ($jobs as $job) {
+            echo "notificato";
+            $this->concierge->notify($job);
+        }
+    }
+
     /**
      * Send instagram comment
      *
@@ -108,6 +119,7 @@ class InstagramService implements ServiceInterface
     {
         $this->getInstagram()->media->comment($mediaId, $text, $replyCommentId);
     }
+
 
 
     /**

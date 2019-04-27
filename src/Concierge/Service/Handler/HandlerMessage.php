@@ -7,9 +7,10 @@ use Concierge\Commands\NullCommand;
 use Concierge\Service\TelegramService;
 use Concierge\Commands\CommandInterface;
 use Concierge\Commands\Job\InstagramSendText;
+use Concierge\Commands\Job\InstagramGetPending;
+use Concierge\Commands\Job\InstagramSendComment;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\MessageEntity;
-use Concierge\Commands\Job\InstagramSendComment;
 
 class HandlerMessage implements HandlerInterface
 {
@@ -50,8 +51,8 @@ class HandlerMessage implements HandlerInterface
                 $recipient = $this->getUsernameFromMessage($message->reply_to_message->text);
 
                 if ($comment !== 0 && $comment < $semiColon) {
-                    foreach($message->reply_to_message->entities as $entity){
-                        if($entity->type === 'text_link'){
+                    foreach ($message->reply_to_message->entities as $entity) {
+                        if ($entity->type === 'text_link') {
                             $match = explode('#', parse_url($entity->url)['fragment']);
                             $text = '@' . $recipient . " " . $message->text; // vincolo delle api
                             return new InstagramSendComment($client, $text, $match[0], $match[1]);
@@ -122,10 +123,13 @@ class HandlerMessage implements HandlerInterface
     private function handleBotCommandEntity(Message $message, MessageEntity $entity): CommandInterface
     {
         $botCommand = trim(substr($message->text, $entity->offset + 1, $entity->length));
+        $client = $this->getClientFromMessage($message->text);
 
         switch ($botCommand) {
             case 'help':
                 return new HelpCommand($this->telegram);
+            case 'pending':
+                return new InstagramGetPending('first');
             default:
                 return new NullCommand;
         }
