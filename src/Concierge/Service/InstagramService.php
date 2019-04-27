@@ -102,7 +102,6 @@ class InstagramService implements ServiceInterface
         $operator = new Operator($this->id, $this->getInstagram());
         $jobs = $operator->handleCommand($job);
         foreach ($jobs as $job) {
-            echo "notificato";
             $this->concierge->notify($job);
         }
     }

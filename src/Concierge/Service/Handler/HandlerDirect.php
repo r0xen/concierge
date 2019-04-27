@@ -94,7 +94,7 @@ class HandlerDirect implements HandlerInterface
     public function retrieveCommand(): CommandInterface
     {
         $direct = $this->parsePush();
-        return self::createJob($direct);
+        return $this->createJob($direct);
     }
 
     /**

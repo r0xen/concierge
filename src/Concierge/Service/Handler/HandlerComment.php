@@ -20,7 +20,7 @@ class HandlerComment implements HandlerInterface
     /**
      * Push notif
      *
-     * @var Push
+     * @var Notification
      */
     private $push;
 
