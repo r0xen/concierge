@@ -19,6 +19,16 @@ $ cd concierge
 $ composer install
 ```
 
+### Usage
+
+Once you setup the bot you'll receive all your DMs and comments in chat. There you reply to the messages, just like a normal chat. You can start conversation too and you have a bunch of special commands:
+
+```
+/dm @username return conversation with @username
+/pending returns last message from all your pending dms
+```
+
+
 ### Development
 
 Want to contribute? You are welcome.

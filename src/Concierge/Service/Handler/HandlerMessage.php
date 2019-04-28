@@ -125,12 +125,7 @@ class HandlerMessage implements HandlerInterface
     {
         $botCommand = trim(substr($message->text, $entity->offset + 1, $entity->length));
         $message->text .= " ";
-        // $client = $this->getClientFromMessage($message->text);
-        // $recipient = $this->getUsernameFromMessage($message->text);
-        // var_dump($client);
-        // var_dump($recipient);
-        // var_dump($botCommand);
-        // exit();
+        /// $client = $this->getClientFromMessage($message->text); 
         switch ($botCommand) {
             case 'help':
                 return new HelpCommand($this->telegram);
