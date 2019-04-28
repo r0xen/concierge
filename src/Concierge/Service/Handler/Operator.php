@@ -5,13 +5,10 @@ namespace Concierge\Service\Handler;
 use InstagramAPI\Instagram;
 use Concierge\Models\Direct;
 use Concierge\Commands\Job\JobAbstract;
+use Concierge\Commands\Job\InstagramGetChat;
 use Concierge\Service\Handler\HandlerDirect;
+use Concierge\Commands\Job\InstagramGetPending;
 
-/**
- * operatore gestisce la creazione di job. prende notifiche (push o comandi da telegram).
- * gli handler parsano e ritornano oggetti e basta. operator trasforma gli oggetti model in job
- * e li ritorna al servizio che notifica il mediatore.
- */
 class Operator
 {
     private $client;
@@ -26,18 +23,45 @@ class Operator
     /**
      * Undocumented function
      *
-     * @param JobAbstract $command
+     * @param JobAbstract $job
      * @return JobAbstract[]
      */
-    public function handleCommand(JobAbstract $command): array
+    public function handleCommand(JobAbstract $job)
     {
-        // se dmpendign
+        if ($job instanceof InstagramGetPending) {
+            return $this->getPendingMessages();
+        }
+        if ($job instanceof InstagramGetChat) {
+            return $this->getMessages($job->getText());
+        }
+    }
+
+    private function getMessages($user): array
+    {
+        $handler = new HandlerDirect();
+        $jobs = array();
+        $thread = $this->instagram->direct->getThreadByParticipants(array($this->instagram->people->getUserIdForName($user)))->getThread();
+        $from = $thread->getUsers()[0]->getUsername();
+        foreach ($thread->getItems() as $item) {
+            $jobs[] = $handler->createJob(new Direct(
+                $from,
+                $this->client,
+                $handler->handleItemType($item),
+                $item->getItemType(),
+                true
+            ));
+        }
+        return array_reverse($jobs);
+    }
+
+    private function getPendingMessages(): array
+    {
         $handler = new HandlerDirect();
         $jobs = array();
         $pendingInbox = $this->instagram->direct->getPendingInbox()->getInbox();
         foreach ($pendingInbox->getThreads() as $thread) {
             $from = $thread->getUsers()[0]->getUsername();
-            foreach ($thread->getItems() as $pendingItem) {
+            foreach ($thread->getItems() as $pendingItem) { // just last message
                 $jobs[] = $handler->createJob(new Direct(
                     $from,
                     $this->client,

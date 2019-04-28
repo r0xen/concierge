@@ -15,6 +15,7 @@ use Concierge\Commands\Job\InstagramSendText;
 use Concierge\Commands\Job\InstagramSendComment;
 use unreal4u\TelegramAPI\HttpClientRequestHandler;
 use Concierge\Commands\Job\InstagramGetPending;
+use Concierge\Commands\Job\InstagramGetChat;
 
 class Concierge
 {
@@ -158,6 +159,10 @@ class Concierge
         }
         if ($job instanceof InstagramGetPending) {
             $this->logger->debug('Admin requested get pending', array($job));
+            $this->getInstagram($job->getClient())->operate($job);
+        }
+        if ($job instanceof InstagramGetChat) {
+            $this->logger->debug('Admin requested get chat', array($job->getText()));
             $this->getInstagram($job->getClient())->operate($job);
         }
     }

@@ -11,6 +11,7 @@ use Concierge\Commands\Job\InstagramGetPending;
 use Concierge\Commands\Job\InstagramSendComment;
 use unreal4u\TelegramAPI\Telegram\Types\Message;
 use unreal4u\TelegramAPI\Telegram\Types\MessageEntity;
+use Concierge\Commands\Job\InstagramGetChat;
 
 class HandlerMessage implements HandlerInterface
 {
@@ -123,13 +124,21 @@ class HandlerMessage implements HandlerInterface
     private function handleBotCommandEntity(Message $message, MessageEntity $entity): CommandInterface
     {
         $botCommand = trim(substr($message->text, $entity->offset + 1, $entity->length));
-        $client = $this->getClientFromMessage($message->text);
-
+        $message->text .= " ";
+        // $client = $this->getClientFromMessage($message->text);
+        // $recipient = $this->getUsernameFromMessage($message->text);
+        // var_dump($client);
+        // var_dump($recipient);
+        // var_dump($botCommand);
+        // exit();
         switch ($botCommand) {
             case 'help':
                 return new HelpCommand($this->telegram);
             case 'pending':
                 return new InstagramGetPending('first');
+            case 'dm':
+                $recipient = $this->getUsernameFromMessage($message->text);
+                return new InstagramGetChat('first', $recipient);
             default:
                 return new NullCommand;
         }
@@ -141,7 +150,7 @@ class HandlerMessage implements HandlerInterface
      * @param string $text
      * @return string
      */
-    private function getClientFromMessage(string $text): string
+    private function getClientFromMessage(string $text): ?string
     {
         $start = strpos($text, '[');
         $end = strpos($text, ']');
@@ -157,7 +166,7 @@ class HandlerMessage implements HandlerInterface
      * @param string $text
      * @return void
      */
-    private function getUsernameFromMessage(string $text): string
+    private function getUsernameFromMessage(string $text): ?string
     {
         $start = strpos($text, '@');
         $firstSemicolon = strpos($text, ':');
