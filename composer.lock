@@ -1447,12 +1447,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mgp25/Instagram-API.git",
-                "reference": "fbdca3a1d4889adca7237e7e3c95ad39657aa7c6"
+                "reference": "e79acc05cd9d690f663a68da2b6a1549d3df29e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mgp25/Instagram-API/zipball/fbdca3a1d4889adca7237e7e3c95ad39657aa7c6",
-                "reference": "fbdca3a1d4889adca7237e7e3c95ad39657aa7c6",
+                "url": "https://api.github.com/repos/mgp25/Instagram-API/zipball/e79acc05cd9d690f663a68da2b6a1549d3df29e7",
+                "reference": "e79acc05cd9d690f663a68da2b6a1549d3df29e7",
                 "shasum": ""
             },
             "require": {
@@ -1515,7 +1515,7 @@
                 "php",
                 "private"
             ],
-            "time": "2019-04-21T20:40:48+00:00"
+            "time": "2019-04-26T23:11:51+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2155,7 +2155,7 @@
         },
         {
             "name": "symfony/process",
-            "version": "v4.2.7",
+            "version": "v4.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",

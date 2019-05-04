@@ -125,15 +125,17 @@ class HandlerMessage implements HandlerInterface
     {
         $botCommand = trim(substr($message->text, $entity->offset + 1, $entity->length));
         $message->text .= " ";
-        /// $client = $this->getClientFromMessage($message->text); 
+
         switch ($botCommand) {
             case 'help':
                 return new HelpCommand($this->telegram);
             case 'pending':
-                return new InstagramGetPending('first');
+                $client = $this->getClientFromMessage($message->text);
+                return new InstagramGetPending($client);
             case 'dm':
+                $client = $this->getClientFromMessage($message->text);
                 $recipient = $this->getUsernameFromMessage($message->text);
-                return new InstagramGetChat('first', $recipient);
+                return new InstagramGetChat($client, $recipient);
             default:
                 return new NullCommand;
         }

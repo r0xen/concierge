@@ -46,7 +46,7 @@ class HandlerDirect implements HandlerInterface
     private function parsePush(): Direct
     {
         $push = $this->push;
-        var_dump($push);
+        // var_dump($push);
         $client = $this->client;
         if ($push->getActionParam('id')) {
             /** @var DirectThread $thread */
@@ -65,9 +65,8 @@ class HandlerDirect implements HandlerInterface
                         return new Direct($from, $client, $text, $item->getItemType());
                     }
                 }
-            } else {
-                return new Direct($from, $client, $push->getMessage(), 'text');
             }
+            return new Direct($from, $client, $push->getMessage(), 'text'); // message deleted or too old -> rely on push text.
         }
     }
     public function createJob(Direct $direct)
@@ -127,9 +126,9 @@ class HandlerDirect implements HandlerInterface
      * @param string $id
      * @return DirectThread
      */
-    private function getThread(string $id): DirectThread
+    private function getThread(string $id, string $cursor = null): DirectThread
     {
-        return $this->instagram->direct->getThread($id)->getThread();
+        return $this->instagram->direct->getThread($id, $cursor)->getThread();
     }
 
     /**
