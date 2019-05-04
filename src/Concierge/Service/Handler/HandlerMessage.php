@@ -95,7 +95,6 @@ class HandlerMessage implements HandlerInterface
     {
         $recipient = $this->getUsernameFromMessage($message->text);
         $client = $this->getClientFromMessage($message->text);
-
         if ($recipient !== false) {
             $answer = $answerText ?? str_replace('[' . $client . ']', '', str_replace('@' . $recipient, '', $message->text));
             return new InstagramSendText($answer, $recipient, $client);
@@ -124,18 +123,16 @@ class HandlerMessage implements HandlerInterface
     private function handleBotCommandEntity(Message $message, MessageEntity $entity): CommandInterface
     {
         $botCommand = trim(substr($message->text, $entity->offset + 1, $entity->length));
+        $args = explode(' ', $message->text);
         $message->text .= " ";
 
         switch ($botCommand) {
             case 'help':
                 return new HelpCommand($this->telegram);
             case 'pending':
-                $client = $this->getClientFromMessage($message->text);
-                return new InstagramGetPending($client);
+                return new InstagramGetPending($args[1] ?? '');
             case 'dm':
-                $client = $this->getClientFromMessage($message->text);
-                $recipient = $this->getUsernameFromMessage($message->text);
-                return new InstagramGetChat($client, $recipient);
+                return new InstagramGetChat($args[1], $args[2]);
             default:
                 return new NullCommand;
         }
@@ -149,12 +146,8 @@ class HandlerMessage implements HandlerInterface
      */
     private function getClientFromMessage(string $text): ?string
     {
-        $start = strpos($text, '[');
-        $end = strpos($text, ']');
-        if (($start && $end) == false) {
-            return 'default';
-        }
-        return substr($text, $start + 1, $end - $start - 1);
+        preg_match('/\[(.*?)\]/', $text, $match);
+        return $match[1];
     }
 
     /**

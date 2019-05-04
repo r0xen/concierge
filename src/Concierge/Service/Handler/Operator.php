@@ -8,6 +8,7 @@ use Concierge\Commands\Job\JobAbstract;
 use Concierge\Commands\Job\InstagramGetChat;
 use Concierge\Service\Handler\HandlerDirect;
 use Concierge\Commands\Job\InstagramGetPending;
+use Concierge\Commands\NullCommand;
 
 class Operator
 {
@@ -41,6 +42,11 @@ class Operator
         $handler = new HandlerDirect();
         $jobs = array();
         $thread = $this->instagram->direct->getThreadByParticipants(array($this->instagram->people->getUserIdForName($user)))->getThread();
+        if ($thread === null) {
+            $jobs[] = new NullCommand();
+            return $jobs;
+        }
+
         $from = $thread->getUsers()[0]->getUsername();
         foreach ($thread->getItems() as $item) {
             $jobs[] = $handler->createJob(new Direct(
