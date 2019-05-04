@@ -146,8 +146,10 @@ class HandlerMessage implements HandlerInterface
      */
     private function getClientFromMessage(string $text): ?string
     {
-        preg_match('/\[(.*?)\]/', $text, $match);
-        return $match[1];
+        if (preg_match('/\[(.*?)\]/', $text, $match)) {
+            return $match[1];
+        }
+        return 'default';
     }
 
     /**
