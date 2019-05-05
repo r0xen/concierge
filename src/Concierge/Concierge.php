@@ -160,10 +160,12 @@ class Concierge
         if ($job instanceof InstagramGetPending) {
             $this->logger->debug('Admin requested get pending', array($job));
             $this->getInstagram($job->getClient())->operate($job);
+            return;
         }
         if ($job instanceof InstagramGetChat) {
             $this->logger->debug('Admin requested get chat', array($job->getText()));
             $this->getInstagram($job->getClient())->operate($job);
+            return;
         }
     }
 

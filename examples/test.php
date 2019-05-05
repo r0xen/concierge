@@ -24,6 +24,7 @@ try {
     $loginResponse = $ig->login(IG_USERNAME, IG_PASSWORD);
     if ($loginResponse !== null && $loginResponse->isTwoFactorRequired()) {
         $twoFactorIdentifier = $loginResponse->getTwoFactorInfo()->getTwoFactorIdentifier();
+        echo "Insert PIN: ";
         $verificationCode = trim(fgets(STDIN));
         $ig->finishTwoFactorLogin(IG_USERNAME, IG_PASSWORD, $twoFactorIdentifier, $verificationCode);
     }

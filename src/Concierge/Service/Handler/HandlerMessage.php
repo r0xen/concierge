@@ -44,6 +44,7 @@ class HandlerMessage implements HandlerInterface
     public function parse(): CommandInterface
     {
         $message = $this->message;
+
         if (isset($message->reply_to_message)) {
             if (isset($message->text)) {
                 $comment = strpos($message->reply_to_message->text, "commented");
@@ -123,7 +124,7 @@ class HandlerMessage implements HandlerInterface
     private function handleBotCommandEntity(Message $message, MessageEntity $entity): CommandInterface
     {
         $botCommand = trim(substr($message->text, $entity->offset + 1, $entity->length));
-        $args = explode(' ', $message->text);
+        $args = explode(' ', str_replace(array('@', '[', ']'), '', $message->text));
         $message->text .= " ";
 
         switch ($botCommand) {
@@ -134,7 +135,7 @@ class HandlerMessage implements HandlerInterface
             case 'dm':
                 return new InstagramGetChat($args[1], $args[2]);
             default:
-                return new NullCommand;
+                return new NullCommand();
         }
     }
 

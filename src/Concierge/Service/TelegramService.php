@@ -165,6 +165,11 @@ class TelegramService implements ServiceInterface
      */
     private function handleUpdates(Update $update): void
     {
+        // in case of edited messages
+        if ($update->message == null) {
+            return;
+        }
+
         if ($this->authenticate($update->message)) {
             $command = $this->handleMessage($update->message);
             if ($command instanceof JobAbstract) {
